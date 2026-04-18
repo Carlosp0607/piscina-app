@@ -54,10 +54,67 @@
     <button class="active" onclick="mostrarSeccion('dashboard', this)">📊 Dashboard</button>
 <button onclick="mostrarSeccion('miembros', this)">👥 Miembros</button>
     <button onclick="mostrarSeccion('asistencia', this)">✅ Asistencia</button>
+    <button onclick="mostrarSeccion('historial-asistencia', this)">📋 Historial Asistencia</button>
     <button onclick="mostrarSeccion('caja', this)">💰 Caja</button>
   </div>
   <button onclick="logout()" style="background: transparent; color: white; border: 2px solid white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 0;">🚪 Cerrar sesión</button>
 </nav>
+<!-- SECCIÓN HISTORIAL ASISTENCIA -->
+<div id="seccion-historial-asistencia" class="seccion">
+  <div class="card">
+    <h2>🔍 Filtrar Asistencia</h2>
+    <div class="form-grid">
+      <div>
+        <label>Por mes</label>
+        <select id="asist_filtro_mes">
+          <option value="">Seleccionar mes...</option>
+          <option value="1">Enero</option>
+          <option value="2">Febrero</option>
+          <option value="3">Marzo</option>
+          <option value="4">Abril</option>
+          <option value="5">Mayo</option>
+          <option value="6">Junio</option>
+          <option value="7">Julio</option>
+          <option value="8">Agosto</option>
+          <option value="9">Septiembre</option>
+          <option value="10">Octubre</option>
+          <option value="11">Noviembre</option>
+          <option value="12">Diciembre</option>
+        </select>
+      </div>
+      <div>
+        <label>Año</label>
+        <input type="number" id="asist_filtro_anio" value="2026">
+      </div>
+      <div>
+        <label>Fecha inicio</label>
+        <input type="date" id="asist_filtro_fecha_inicio">
+      </div>
+      <div>
+        <label>Fecha fin</label>
+        <input type="date" id="asist_filtro_fecha_fin">
+      </div>
+    </div>
+    <button onclick="filtrarAsistenciaPorMes()">📅 Filtrar por mes</button>
+    <button onclick="filtrarAsistenciaPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
+    <button onclick="cargarHistorialAsistencia()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
+  </div>
+
+  <div class="resumen-caja">
+    <div class="caja-card"><h3>✅ Total Asistencias</h3><div class="monto" id="asist_total">0</div></div>
+    <div class="caja-card"><h3>📅 Fecha</h3><div class="monto" style="font-size:16px" id="asist_fecha"></div></div>
+  </div>
+
+  <div class="card">
+    <h2>Historial de Asistencia</h2>
+    <table>
+      <thead>
+        <tr><th>Miembro</th><th>Documento</th><th>Fecha</th><th>Hora Entrada</th><th>Hora Salida</th></tr>
+      </thead>
+      <tbody id="tablaHistorialAsistencia"></tbody>
+    </table>
+  </div>
+</div>
 
   <div class="container">
     <!-- SECCIÓN DASHBOARD -->
@@ -323,6 +380,47 @@
   </div>
 
   <script>
+    document.getElementById('asist_fecha').textContent = new Date().toLocaleDateString('es-CO');
+
+async function cargarHistorialAsistencia() {
+  const res = await fetch('/api/asistencia');
+  const lista = await res.json();
+  mostrarHistorialAsistencia(lista);
+}
+
+async function filtrarAsistenciaPorMes() {
+  const mes = document.getElementById('asist_filtro_mes').value;
+  const anio = document.getElementById('asist_filtro_anio').value;
+  if (!mes || !anio) return alert('Selecciona mes y año');
+  const res = await fetch(`/api/asistencia/mes?mes=${mes}&anio=${anio}`);
+  const lista = await res.json();
+  mostrarHistorialAsistencia(lista);
+}
+
+async function filtrarAsistenciaPorRango() {
+  const fechaInicio = document.getElementById('asist_filtro_fecha_inicio').value;
+  const fechaFin = document.getElementById('asist_filtro_fecha_fin').value || fechaInicio;
+  if (!fechaInicio) return alert('Selecciona al menos una fecha de inicio');
+  const res = await fetch(`/api/asistencia/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+  const lista = await res.json();
+  mostrarHistorialAsistencia(lista);
+}
+
+function mostrarHistorialAsistencia(lista) {
+  document.getElementById('asist_total').textContent = lista.length;
+  const tbody = document.getElementById('tablaHistorialAsistencia');
+  tbody.innerHTML = lista.length === 0
+    ? '<tr><td colspan="5" style="text-align:center">No hay registros</td></tr>'
+    : lista.map(a => `
+      <tr>
+        <td>${a.nombre}</td>
+        <td>${a.documento}</td>
+        <td>${a.fecha ? a.fecha.split('T')[0] : '---'}</td>
+        <td>${a.hora_entrada || '---'}</td>
+        <td>${a.hora_salida || '---'}</td>
+      </tr>
+    `).join('');
+}
     async function logout() {
   await fetch('/api/auth/logout', { method: 'POST' });
   window.location.href = '/login.html';
@@ -334,6 +432,7 @@
     document.getElementById('pago_fecha').value = hoy;
 
     function mostrarSeccion(nombre, btn) {
+        if (nombre === 'historial-asistencia') cargarHistorialAsistencia();
       document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
       document.getElementById('seccion-' + nombre).classList.add('activa');
