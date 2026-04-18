@@ -148,6 +148,44 @@
 
     <!-- SECCIÓN CAJA -->
     <div id="seccion-caja" class="seccion">
+        <div class="card">
+  <h2>🔍 Filtrar Pagos</h2>
+  <div class="form-grid">
+    <div>
+      <label>Por mes</label>
+      <select id="filtro_mes">
+        <option value="">Seleccionar mes...</option>
+        <option value="1">Enero</option>
+        <option value="2">Febrero</option>
+        <option value="3">Marzo</option>
+        <option value="4">Abril</option>
+        <option value="5">Mayo</option>
+        <option value="6">Junio</option>
+        <option value="7">Julio</option>
+        <option value="8">Agosto</option>
+        <option value="9">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
+      </select>
+    </div>
+    <div>
+      <label>Año</label>
+      <input type="number" id="filtro_anio" value="2026">
+    </div>
+    <div>
+      <label>Fecha inicio</label>
+      <input type="date" id="filtro_fecha_inicio">
+    </div>
+    <div>
+      <label>Fecha fin</label>
+      <input type="date" id="filtro_fecha_fin">
+    </div>
+  </div>
+  <button onclick="filtrarPorMes()">📅 Filtrar por mes</button>
+  <button onclick="filtrarPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
+  <button onclick="cargarCaja()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
+</div>
       <div class="resumen-caja">
         <div class="caja-card"><h3>💰 Total Hoy</h3><div class="monto" id="totalHoy">$0</div></div>
         <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="cantidadHoy">0</div></div>
@@ -355,6 +393,43 @@ async function cargarDashboard() {
         <td>${m.fecha_vencimiento.split('T')[0]}</td>
       </tr>
     `).join('');
+}
+async function filtrarPorMes() {
+  const mes = document.getElementById('filtro_mes').value;
+  const anio = document.getElementById('filtro_anio').value;
+  if (!mes || !anio) return alert('Selecciona mes y año');
+  const res = await fetch(`/api/pagos/mes?mes=${mes}&anio=${anio}`);
+  const data = await res.json();
+  mostrarPagosFiltrados(data.pagos, data.total);
+}
+
+async function filtrarPorRango() {
+  const fechaInicio = document.getElementById('filtro_fecha_inicio').value;
+  const fechaFin = document.getElementById('filtro_fecha_fin').value;
+  if (!fechaInicio || !fechaFin) return alert('Selecciona fecha inicio y fecha fin');
+  const res = await fetch(`/api/pagos/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+  const data = await res.json();
+  mostrarPagosFiltrados(data.pagos, data.total);
+}
+
+function mostrarPagosFiltrados(pagos, total) {
+  document.getElementById('totalHoy').textContent = '$' + Number(total || 0).toLocaleString('es-CO');
+  document.getElementById('cantidadHoy').textContent = pagos.length;
+  const tbody = document.getElementById('tablaPagos');
+  tbody.innerHTML = pagos.map(p => `
+    <tr>
+      <td>${p.nombre}</td>
+      <td>${p.concepto}</td>
+      <td>$${Number(p.monto).toLocaleString('es-CO')}</td>
+      <td>${p.metodo_pago}</td>
+      <td>${p.fecha ? p.fecha.split('T')[0] : '---'}</td>
+      <td>${p.fecha_finalizacion ? p.fecha_finalizacion.split('T')[0] : '---'}</td>
+      <td>
+        <button class="btn-editar" onclick="abrirEditarPago(${p.id})">✏️ Editar</button>
+        <button class="btn-eliminar" onclick="eliminarPago(${p.id})">🗑️ Eliminar</button>
+      </td>
+    </tr>
+  `).join('');
 }
 
     async function cargarMiembros() {

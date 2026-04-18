@@ -4,6 +4,8 @@ const asistenciaController = require('../controllers/asistenciaController');
 
 router.get('/', asistenciaController.getAll);
 router.get('/hoy', asistenciaController.getHoy);
+router.get('/mes', asistenciaController.getByMes);
+router.get('/rango', asistenciaController.getByRango);
 router.post('/entrada', asistenciaController.registrarEntrada);
 router.patch('/:id/salida', asistenciaController.registrarSalida);
 

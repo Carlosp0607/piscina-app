@@ -36,6 +36,29 @@ const Asistencia = {
       ORDER BY a.hora_entrada DESC
     `);
     return result.rows;
+  },
+
+  getByMes: async (mes, anio) => {
+    const result = await pool.query(`
+      SELECT a.*, m.nombre, m.documento
+      FROM asistencia a
+      JOIN miembros m ON a.miembro_id = m.id
+      WHERE EXTRACT(MONTH FROM a.fecha) = $1
+      AND EXTRACT(YEAR FROM a.fecha) = $2
+      ORDER BY a.fecha DESC, a.hora_entrada DESC
+    `, [mes, anio]);
+    return result.rows;
+  },
+
+  getByRango: async (fechaInicio, fechaFin) => {
+    const result = await pool.query(`
+      SELECT a.*, m.nombre, m.documento
+      FROM asistencia a
+      JOIN miembros m ON a.miembro_id = m.id
+      WHERE a.fecha BETWEEN $1 AND $2
+      ORDER BY a.fecha DESC, a.hora_entrada DESC
+    `, [fechaInicio, fechaFin]);
+    return result.rows;
   }
 };
 

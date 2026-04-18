@@ -36,6 +36,26 @@ const asistenciaController = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
+  },
+
+  getByMes: async (req, res) => {
+    try {
+      const { mes, anio } = req.query;
+      const asistencia = await Asistencia.getByMes(mes, anio);
+      res.json(asistencia);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  getByRango: async (req, res) => {
+    try {
+      const { fechaInicio, fechaFin } = req.query;
+      const asistencia = await Asistencia.getByRango(fechaInicio, fechaFin);
+      res.json(asistencia);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
 };
 

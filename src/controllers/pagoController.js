@@ -62,6 +62,28 @@ const pagoController = {
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
+  },
+
+  getByMes: async (req, res) => {
+    try {
+      const { mes, anio } = req.query;
+      const pagos = await Pago.getByMes(mes, anio);
+      const total = await Pago.getTotalByMes(mes, anio);
+      res.json({ pagos, total });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+
+  getByRango: async (req, res) => {
+    try {
+      const { fechaInicio, fechaFin } = req.query;
+      const pagos = await Pago.getByRango(fechaInicio, fechaFin);
+      const total = await Pago.getTotalByRango(fechaInicio, fechaFin);
+      res.json({ pagos, total });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
 };
 
