@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaGest - Sistema de Piscina</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f4f8; }
+    header { background: #0077b6; color: white; padding: 20px; text-align: center; }
+    header h1 { font-size: 28px; }
+    nav { background: #005f8e; display: flex; justify-content: center; gap: 10px; padding: 10px; }
+    nav button { background: transparent; color: white; border: 2px solid white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 0; }
+    nav button.active, nav button:hover { background: white; color: #005f8e; }
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+    .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h2 { color: #0077b6; margin-bottom: 20px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    button { background: #0077b6; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 15px; }
+    button:hover { background: #005f8e; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #0077b6; color: white; padding: 10px; text-align: left; font-size: 13px; }
+    td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+    tr:hover { background: #f9f9f9; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+    .activo { background: #d4edda; color: #155724; }
+    .vencido { background: #f8d7da; color: #721c24; }
+    .suspendido { background: #fff3cd; color: #856404; }
+    .btn-eliminar { background: #dc3545; color: white; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 4px; margin-top: 0; }
+    .btn-editar { background: #ffc107; color: #333; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 0; }
+    .btn-salida { background: #fd7e14; color: white; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 0; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; overflow-y: auto; }
+    .modal-content { background: white; margin: 50px auto; padding: 30px; border-radius: 10px; max-width: 650px; }
+    .modal h2 { margin-bottom: 20px; color: #0077b6; }
+    .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
+    .btn-cancelar { background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 0; }
+    .seccion { display: none; }
+    .seccion.activa { display: block; }
+    .resumen-caja { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+    .caja-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .caja-card h3 { color: #555; font-size: 14px; margin-bottom: 10px; }
+    .caja-card .monto { font-size: 26px; font-weight: bold; color: #0077b6; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🏊 AquaGest - Sistema de Gestión de Piscina</h1>
+  </header>
+
+  <nav>
+    <button class="active" onclick="mostrarSeccion('dashboard', this)">📊 Dashboard</button>
+<button onclick="mostrarSeccion('miembros', this)">👥 Miembros</button>
+    <button onclick="mostrarSeccion('asistencia', this)">✅ Asistencia</button>
+    <button onclick="mostrarSeccion('caja', this)">💰 Caja</button>
+  </nav>
+
+  <div class="container">
+    <!-- SECCIÓN DASHBOARD -->
+<div id="seccion-dashboard" class="seccion activa">
+  <div class="resumen-caja">
+    <div class="caja-card"><h3>👥 Miembros Activos</h3><div class="monto" id="dash_activos">0</div></div>
+    <div class="caja-card"><h3>⚠️ Por Vencer</h3><div class="monto" id="dash_por_vencer">0</div></div>
+    <div class="caja-card"><h3>❌ Vencidos</h3><div class="monto" id="dash_vencidos">0</div></div>
+  </div>
+  <div class="resumen-caja">
+    <div class="caja-card"><h3>✅ Asistencia Hoy</h3><div class="monto" id="dash_asistencia">0</div></div>
+    <div class="caja-card"><h3>💰 Recaudado Hoy</h3><div class="monto" id="dash_recaudado">$0</div></div>
+    <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="dash_pagos">0</div></div>
+  </div>
+
+  <div class="card">
+    <h2>⚠️ Miembros Próximos a Vencer (7 días)</h2>
+    <table>
+      <thead>
+        <tr><th>Nombre</th><th>Documento</th><th>Plan</th><th>Vence</th></tr>
+      </thead>
+      <tbody id="dash_tabla_vencer"></tbody>
+    </table>
+  </div>
+</div>
+
+    <!-- SECCIÓN MIEMBROS -->
+    <div id="seccion-miembros" class="seccion activa">
+      <div class="card">
+        <h2>Registrar Nuevo Miembro</h2>
+        <div class="form-grid">
+          <div><label>Nombre completo</label><input type="text" id="nombre" placeholder="Ej: Carlos Pérez"></div>
+          <div><label>Documento</label><input type="text" id="documento" placeholder="Ej: 1050332855"></div>
+          <div><label>Teléfono</label><input type="text" id="telefono" placeholder="Ej: 3001234567"></div>
+          <div><label>Email</label><input type="email" id="email" placeholder="Ej: correo@email.com"></div>
+          <div>
+            <label>Plan</label>
+            <select id="plan">
+              <option value="">Seleccionar plan</option>
+              <option value="mensual">Mensual</option>
+              <option value="trimestral">Trimestral</option>
+              <option value="familiar">Familiar</option>
+            </select>
+          </div>
+          <div></div>
+          <div><label>Fecha de inicio</label><input type="date" id="fecha_inicio"></div>
+          <div><label>Fecha de vencimiento</label><input type="date" id="fecha_vencimiento"></div>
+        </div>
+        <button onclick="registrarMiembro()">Registrar Miembro</button>
+      </div>
+
+      <div class="card">
+        <h2>Miembros Registrados</h2>
+        <input type="text" id="buscador" placeholder="🔍 Buscar por nombre o documento..." onkeyup="buscarMiembro()" style="margin-bottom: 15px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Plan</th><th>Vencimiento</th><th>Estado</th><th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaMiembros"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN ASISTENCIA -->
+    <div id="seccion-asistencia" class="seccion">
+      <div class="card">
+        <h2>Registrar Entrada</h2>
+        <div class="form-grid">
+          <div>
+            <label>Seleccionar Miembro</label>
+            <select id="miembro_asistencia"><option value="">Seleccionar miembro...</option></select>
+          </div>
+        </div>
+        <button onclick="registrarEntrada()">✅ Registrar Entrada</button>
+      </div>
+      <div class="card">
+        <h2>Asistencia de Hoy</h2>
+        <table>
+          <thead>
+            <tr><th>Miembro</th><th>Documento</th><th>Hora Entrada</th><th>Hora Salida</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaAsistencia"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SECCIÓN CAJA -->
+    <div id="seccion-caja" class="seccion">
+      <div class="resumen-caja">
+        <div class="caja-card"><h3>💰 Total Hoy</h3><div class="monto" id="totalHoy">$0</div></div>
+        <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="cantidadHoy">0</div></div>
+        <div class="caja-card"><h3>📅 Fecha</h3><div class="monto" style="font-size:16px" id="fechaHoy"></div></div>
+      </div>
+
+      <div class="card">
+        <h2>Registrar Pago</h2>
+        <div class="form-grid">
+          <div>
+            <label>Miembro</label>
+            <select id="pago_miembro"><option value="">Seleccionar miembro...</option></select>
+          </div>
+          <div>
+            <label>Concepto</label>
+            <select id="pago_concepto">
+              <option value="">Seleccionar concepto...</option>
+              <option value="mensualidad">Mensualidad</option>
+              <option value="inscripcion">Inscripción</option>
+              <option value="clase">Clase</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div><label>Monto</label><input type="number" id="pago_monto" placeholder="Ej: 50000"></div>
+          <div>
+            <label>Método de pago</label>
+            <select id="pago_metodo">
+              <option value="">Seleccionar método...</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia</option>
+              <option value="tarjeta">Tarjeta</option>
+            </select>
+          </div>
+          <div><label>Fecha de pago</label><input type="date" id="pago_fecha"></div>
+          <div><label>Fecha de finalización</label><input type="date" id="pago_fecha_finalizacion"></div>
+          <div style="grid-column: span 2">
+            <label>Observaciones (opcional)</label>
+            <textarea id="pago_observaciones" rows="2" placeholder="Ej: Pago de abril"></textarea>
+          </div>
+        </div>
+        <button onclick="registrarPago()">💰 Registrar Pago</button>
+      </div>
+
+      <div class="card">
+        <h2>Pagos Registrados</h2>
+        <table>
+          <thead>
+            <tr><th>Miembro</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Fecha Pago</th><th>Fecha Finalización</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tablaPagos"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Editar Miembro -->
+  <div class="modal" id="modalEditar">
+    <div class="modal-content">
+      <h2>Editar Miembro</h2>
+      <input type="hidden" id="edit_id">
+      <div class="form-grid">
+        <div><label>Nombre completo</label><input type="text" id="edit_nombre"></div>
+        <div><label>Documento</label><input type="text" id="edit_documento"></div>
+        <div><label>Teléfono</label><input type="text" id="edit_telefono"></div>
+        <div><label>Email</label><input type="email" id="edit_email"></div>
+        <div>
+          <label>Plan</label>
+          <select id="edit_plan">
+            <option value="mensual">Mensual</option>
+            <option value="trimestral">Trimestral</option>
+            <option value="familiar">Familiar</option>
+          </select>
+        </div>
+        <div>
+          <label>Estado</label>
+          <select id="edit_estado">
+            <option value="activo">Activo</option>
+            <option value="vencido">Vencido</option>
+            <option value="suspendido">Suspendido</option>
+          </select>
+        </div>
+        <div><label>Fecha de inicio</label><input type="date" id="edit_fecha_inicio"></div>
+        <div><label>Fecha de vencimiento</label><input type="date" id="edit_fecha_vencimiento"></div>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="guardarEdicion()">Guardar cambios</button>
+        <button class="btn-cancelar" onclick="cerrarModal('modalEditar')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Editar Pago -->
+  <div class="modal" id="modalEditarPago">
+    <div class="modal-content">
+      <h2>Editar Pago</h2>
+      <input type="hidden" id="edit_pago_id">
+      <div class="form-grid">
+        <div>
+          <label>Miembro</label>
+          <select id="edit_pago_miembro"><option value="">Seleccionar miembro...</option></select>
+        </div>
+        <div>
+          <label>Concepto</label>
+          <select id="edit_pago_concepto">
+            <option value="mensualidad">Mensualidad</option>
+            <option value="inscripcion">Inscripción</option>
+            <option value="clase">Clase</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div><label>Monto</label><input type="number" id="edit_pago_monto"></div>
+        <div>
+          <label>Método de pago</label>
+          <select id="edit_pago_metodo">
+            <option value="efectivo">Efectivo</option>
+            <option value="transferencia">Transferencia</option>
+            <option value="tarjeta">Tarjeta</option>
+          </select>
+        </div>
+        <div><label>Fecha de pago</label><input type="date" id="edit_pago_fecha"></div>
+        <div><label>Fecha de finalización</label><input type="date" id="edit_pago_fecha_finalizacion"></div>
+        <div style="grid-column: span 2">
+          <label>Observaciones</label>
+          <textarea id="edit_pago_observaciones" rows="2"></textarea>
+        </div>
+      </div>
+      <div class="modal-buttons">
+        <button onclick="guardarEdicionPago()">Guardar cambios</button>
+        <button class="btn-cancelar" onclick="cerrarModal('modalEditarPago')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-CO');
+
+    // Fecha de hoy por defecto en el formulario de pagos
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('pago_fecha').value = hoy;
+
+    function mostrarSeccion(nombre, btn) {
+      document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      document.getElementById('seccion-' + nombre).classList.add('activa');
+      btn.classList.add('active');
+      if (nombre === 'dashboard') cargarDashboard();
+      if (nombre === 'asistencia') cargarAsistenciaHoy();
+      if (nombre === 'caja') cargarCaja();
+    }
+
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    function buscarMiembro() {
+  const texto = document.getElementById('buscador').value.toLowerCase();
+  const filas = document.querySelectorAll('#tablaMiembros tr');
+  filas.forEach(fila => {
+    const contenido = fila.textContent.toLowerCase();
+    fila.style.display = contenido.includes(texto) ? '' : 'none';
+  });
+}
+async function cargarDashboard() {
+  const [miembrosRes, asistenciaRes, totalRes, pagosRes] = await Promise.all([
+    fetch('/api/miembros'),
+    fetch('/api/asistencia/hoy'),
+    fetch('/api/pagos/total-hoy'),
+    fetch('/api/pagos/hoy')
+  ]);
+  const miembros = await miembrosRes.json();
+  const asistencia = await asistenciaRes.json();
+  const { total } = await totalRes.json();
+  const pagos = await pagosRes.json();
+
+  const hoy = new Date();
+  const en7dias = new Date();
+  en7dias.setDate(hoy.getDate() + 7);
+
+  const activos = miembros.filter(m => m.estado === 'activo');
+  const vencidos = miembros.filter(m => m.estado === 'vencido');
+  const porVencer = miembros.filter(m => {
+    const vence = new Date(m.fecha_vencimiento);
+    return m.estado === 'activo' && vence <= en7dias && vence >= hoy;
+  });
+
+  document.getElementById('dash_activos').textContent = activos.length;
+  document.getElementById('dash_vencidos').textContent = vencidos.length;
+  document.getElementById('dash_por_vencer').textContent = porVencer.length;
+  document.getElementById('dash_asistencia').textContent = asistencia.length;
+  document.getElementById('dash_recaudado').textContent = '$' + Number(total).toLocaleString('es-CO');
+  document.getElementById('dash_pagos').textContent = pagos.length;
+
+  const tbody = document.getElementById('dash_tabla_vencer');
+  tbody.innerHTML = porVencer.length === 0
+    ? '<tr><td colspan="4" style="text-align:center">No hay miembros próximos a vencer</td></tr>'
+    : porVencer.map(m => `
+      <tr>
+        <td>${m.nombre}</td>
+        <td>${m.documento}</td>
+        <td>${m.plan}</td>
+        <td>${m.fecha_vencimiento.split('T')[0]}</td>
+      </tr>
+    `).join('');
+}
+
+    async function cargarMiembros() {
+      const res = await fetch('/api/miembros');
+      const miembros = await res.json();
+      const tbody = document.getElementById('tablaMiembros');
+      tbody.innerHTML = miembros.map(m => `
+        <tr>
+          <td>${m.nombre}</td>
+          <td>${m.documento}</td>
+          <td>${m.telefono}</td>
+          <td>${m.plan}</td>
+          <td>${m.fecha_vencimiento.split('T')[0]}</td>
+          <td><span class="badge ${m.estado}">${m.estado}</span></td>
+          <td>
+            <button class="btn-editar" onclick="abrirEditar(${m.id})"> Editar</button>
+            <button class="btn-eliminar" onclick="eliminarMiembro(${m.id})">Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+
+      const activos = miembros.filter(m => m.estado === 'activo');
+      const options = '<option value="">Seleccionar miembro...</option>' +
+        activos.map(m => `<option value="${m.id}">${m.nombre} - ${m.documento}</option>`).join('');
+      document.getElementById('miembro_asistencia').innerHTML = options;
+      document.getElementById('pago_miembro').innerHTML = options;
+      document.getElementById('edit_pago_miembro').innerHTML = options;
+    }
+
+    async function registrarMiembro() {
+      const data = {
+        nombre: document.getElementById('nombre').value,
+        documento: document.getElementById('documento').value,
+        telefono: document.getElementById('telefono').value,
+        email: document.getElementById('email').value,
+        plan: document.getElementById('plan').value,
+        fecha_inicio: document.getElementById('fecha_inicio').value,
+        fecha_vencimiento: document.getElementById('fecha_vencimiento').value
+      };
+      await fetch('/api/miembros', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      cargarMiembros();
+    }
+
+    async function eliminarMiembro(id) {
+      if (!confirm('¿Estás seguro de eliminar este miembro?')) return;
+      await fetch(`/api/miembros/${id}`, { method: 'DELETE' });
+      cargarMiembros();
+    }
+
+    async function abrirEditar(id) {
+      const res = await fetch(`/api/miembros/${id}`);
+      const m = await res.json();
+      document.getElementById('edit_id').value = m.id;
+      document.getElementById('edit_nombre').value = m.nombre;
+      document.getElementById('edit_documento').value = m.documento;
+      document.getElementById('edit_telefono').value = m.telefono;
+      document.getElementById('edit_email').value = m.email;
+      document.getElementById('edit_plan').value = m.plan;
+      document.getElementById('edit_estado').value = m.estado;
+      document.getElementById('edit_fecha_inicio').value = m.fecha_inicio.split('T')[0];
+      document.getElementById('edit_fecha_vencimiento').value = m.fecha_vencimiento.split('T')[0];
+      document.getElementById('modalEditar').style.display = 'block';
+    }
+
+    async function guardarEdicion() {
+      const id = document.getElementById('edit_id').value;
+      const data = {
+        nombre: document.getElementById('edit_nombre').value,
+        documento: document.getElementById('edit_documento').value,
+        telefono: document.getElementById('edit_telefono').value,
+        email: document.getElementById('edit_email').value,
+        plan: document.getElementById('edit_plan').value,
+        estado: document.getElementById('edit_estado').value,
+        fecha_inicio: document.getElementById('edit_fecha_inicio').value,
+        fecha_vencimiento: document.getElementById('edit_fecha_vencimiento').value
+      };
+      await fetch(`/api/miembros/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      cerrarModal('modalEditar');
+      cargarMiembros();
+    }
+
+    async function registrarEntrada() {
+      const miembro_id = document.getElementById('miembro_asistencia').value;
+      if (!miembro_id) return alert('Selecciona un miembro');
+      await fetch('/api/asistencia/entrada', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ miembro_id })
+      });
+      cargarAsistenciaHoy();
+    }
+
+    async function registrarSalida(id) {
+      await fetch(`/api/asistencia/${id}/salida`, { method: 'PATCH' });
+      cargarAsistenciaHoy();
+    }
+
+    async function cargarAsistenciaHoy() {
+      const res = await fetch('/api/asistencia/hoy');
+      const lista = await res.json();
+      const tbody = document.getElementById('tablaAsistencia');
+      tbody.innerHTML = lista.map(a => `
+        <tr>
+          <td>${a.nombre}</td>
+          <td>${a.documento}</td>
+          <td>${a.hora_entrada}</td>
+          <td>${a.hora_salida || '---'}</td>
+          <td>
+            ${!a.hora_salida ? `<button class="btn-salida" onclick="registrarSalida(${a.id})">🚪 Registrar Salida</button>` : '✅ Completado'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function registrarPago() {
+      const data = {
+        miembro_id: document.getElementById('pago_miembro').value,
+        concepto: document.getElementById('pago_concepto').value,
+        monto: document.getElementById('pago_monto').value,
+        metodo_pago: document.getElementById('pago_metodo').value,
+        fecha: document.getElementById('pago_fecha').value,
+        fecha_finalizacion: document.getElementById('pago_fecha_finalizacion').value,
+        observaciones: document.getElementById('pago_observaciones').value
+      };
+      if (!data.miembro_id || !data.concepto || !data.monto || !data.metodo_pago || !data.fecha) {
+        return alert('Por favor completa todos los campos obligatorios');
+      }
+      await fetch('/api/pagos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      cargarCaja();
+    }
+
+    async function abrirEditarPago(id) {
+      const res = await fetch(`/api/pagos/${id}`);
+      const p = await res.json();
+      document.getElementById('edit_pago_id').value = p.id;
+      document.getElementById('edit_pago_miembro').value = p.miembro_id;
+      document.getElementById('edit_pago_concepto').value = p.concepto;
+      document.getElementById('edit_pago_monto').value = p.monto;
+      document.getElementById('edit_pago_metodo').value = p.metodo_pago;
+      document.getElementById('edit_pago_fecha').value = p.fecha.split('T')[0];
+      document.getElementById('edit_pago_fecha_finalizacion').value = p.fecha_finalizacion ? p.fecha_finalizacion.split('T')[0] : '';
+      document.getElementById('edit_pago_observaciones').value = p.observaciones || '';
+      document.getElementById('modalEditarPago').style.display = 'block';
+    }
+
+    async function guardarEdicionPago() {
+      const id = document.getElementById('edit_pago_id').value;
+      const data = {
+        miembro_id: document.getElementById('edit_pago_miembro').value,
+        concepto: document.getElementById('edit_pago_concepto').value,
+        monto: document.getElementById('edit_pago_monto').value,
+        metodo_pago: document.getElementById('edit_pago_metodo').value,
+        fecha: document.getElementById('edit_pago_fecha').value,
+        fecha_finalizacion: document.getElementById('edit_pago_fecha_finalizacion').value,
+        observaciones: document.getElementById('edit_pago_observaciones').value
+      };
+      await fetch(`/api/pagos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      cerrarModal('modalEditarPago');
+      cargarCaja();
+    }
+
+    async function eliminarPago(id) {
+      if (!confirm('¿Eliminar este pago?')) return;
+      await fetch(`/api/pagos/${id}`, { method: 'DELETE' });
+      cargarCaja();
+    }
+
+    async function cargarCaja() {
+      const [pagosRes, totalRes] = await Promise.all([
+        fetch('/api/pagos'),
+        fetch('/api/pagos/total-hoy')
+      ]);
+      const pagos = await pagosRes.json();
+      const { total } = await totalRes.json();
+
+      const pagosHoy = pagos.filter(p => p.fecha && p.fecha.split('T')[0] === hoy);
+      document.getElementById('totalHoy').textContent = '$' + Number(total).toLocaleString('es-CO');
+      document.getElementById('cantidadHoy').textContent = pagosHoy.length;
+
+      const tbody = document.getElementById('tablaPagos');
+      tbody.innerHTML = pagos.map(p => `
+        <tr>
+          <td>${p.nombre}</td>
+          <td>${p.concepto}</td>
+          <td>$${Number(p.monto).toLocaleString('es-CO')}</td>
+          <td>${p.metodo_pago}</td>
+          <td>${p.fecha ? p.fecha.split('T')[0] : '---'}</td>
+          <td>${p.fecha_finalizacion ? p.fecha_finalizacion.split('T')[0] : '---'}</td>
+          <td>
+            <button class="btn-editar" onclick="abrirEditarPago(${p.id})">✏️ Editar</button>
+            <button class="btn-eliminar" onclick="eliminarPago(${p.id})">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    cargarMiembros();
+cargarDashboard();
+  </script>
+</body>
+</html>
