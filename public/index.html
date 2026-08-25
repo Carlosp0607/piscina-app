@@ -3,146 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AquaGest - Sistema de Piscina</title>
+  <title>Gestión de Gimnasio</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f0f4f8; }
-    header { background: #0077b6; color: white; padding: 20px; text-align: center; }
-    header h1 { font-size: 28px; }
-    nav { background: #005f8e; display: flex; justify-content: center; gap: 10px; padding: 10px; }
-    nav button { background: transparent; color: white; border: 2px solid white; padding: 8px 20px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 0; }
-    nav button.active, nav button:hover { background: white; color: #005f8e; }
-    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
-    .card { background: white; border-radius: 10px; padding: 25px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h2 { color: #0077b6; margin-bottom: 20px; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-    button { background: #0077b6; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 15px; }
-    button:hover { background: #005f8e; }
-    table { width: 100%; border-collapse: collapse; }
-    th { background: #0077b6; color: white; padding: 10px; text-align: left; font-size: 13px; }
-    td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
-    tr:hover { background: #f9f9f9; }
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-    .activo { background: #d4edda; color: #155724; }
-    .vencido { background: #f8d7da; color: #721c24; }
-    .suspendido { background: #fff3cd; color: #856404; }
-    .btn-eliminar { background: #dc3545; color: white; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-right: 4px; margin-top: 0; }
-    .btn-editar { background: #ffc107; color: #333; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 0; }
-    .btn-salida { background: #fd7e14; color: white; padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; margin-top: 0; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; overflow-y: auto; }
-    .modal-content { background: white; margin: 50px auto; padding: 30px; border-radius: 10px; max-width: 650px; }
-    .modal h2 { margin-bottom: 20px; color: #0077b6; }
-    .modal-buttons { display: flex; gap: 10px; margin-top: 15px; }
-    .btn-cancelar { background: #6c757d; color: white; padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 0; }
+    /* Agrega aquí tus estilos CSS personalizados si no los tienes en un archivo externo */
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f9; }
+    header { display: flex; justify-content: space-between; align-items: center; background: #343a40; color: #fff; padding: 15px 20px; border-radius: 8px; }
+    nav button { background: #495057; color: white; border: none; padding: 10px 15px; margin-right: 5px; cursor: pointer; border-radius: 4px; }
+    nav button.active { background: #007bff; }
+    .container { margin-top: 20px; }
     .seccion { display: none; }
     .seccion.activa { display: block; }
-    .resumen-caja { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-    .caja-card { background: white; border-radius: 10px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .caja-card h3 { color: #555; font-size: 14px; margin-bottom: 10px; }
-    .caja-card .monto { font-size: 26px; font-weight: bold; color: #0077b6; }
+    .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .resumen-caja { display: flex; gap: 15px; margin-bottom: 20px; }
+    .caja-card { flex: 1; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
+    .monto { font-size: 24px; font-weight: bold; color: #28a745; margin-top: 5px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    .form-grid div { display: flex; flex-direction: column; }
+    label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+    input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    button { cursor: pointer; background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; }
+    button:hover { opacity: 0.9; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; }
+    th { background: #e9ecef; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; color: white; }
+    .badge.activo { background: #28a745; }
+    .badge.vencido { background: #dc3545; }
+    .badge.suspendido { background: #ffc107; color: black; }
+    .btn-editar { background: #ffc107; color: black; }
+    .btn-eliminar { background: #dc3545; }
+    .btn-salida { background: #17a2b8; }
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+    .modal-content { background: white; width: 500px; max-width: 90%; margin: 50px auto; padding: 20px; border-radius: 8px; }
+    .modal-buttons { margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-cancelar { background: #6c757d; }
   </style>
 </head>
 <body>
+
   <header>
-    <h1>🏊 AquaGest - Sistema de Gestión de Piscina</h1>
+    <h1>Control de Gimnasio</h1>
+    <nav>
+      <button class="active" onclick="mostrarSeccion('dashboard', this)">Dashboard</button>
+      <button onclick="mostrarSeccion('miembros', this)">Miembros</button>
+      <button onclick="mostrarSeccion('asistencia', this)">Asistencia</button>
+      <button onclick="mostrarSeccion('historial-asistencia', this)">Historial Asistencia</button>
+      <button onclick="mostrarSeccion('caja', this)">Caja y Pagos</button>
+      <button style="background: #dc3545;" onclick="logout()">Cerrar Sesión</button>
+    </nav>
   </header>
 
-  <nav style="justify-content: space-between; padding: 10px 30px;">
-  <div style="display: flex; gap: 10px;">
-    <button class="active" onclick="mostrarSeccion('dashboard', this)">📊 Dashboard</button>
-<button onclick="mostrarSeccion('miembros', this)">👥 Miembros</button>
-    <button onclick="mostrarSeccion('asistencia', this)">✅ Asistencia</button>
-    <button onclick="mostrarSeccion('historial-asistencia', this)">📋 Historial Asistencia</button>
-    <button onclick="mostrarSeccion('caja', this)">💰 Caja</button>
-  </div>
-  <button onclick="logout()" style="background: transparent; color: white; border: 2px solid white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; margin-top: 0;">🚪 Cerrar sesión</button>
-</nav>
-<!-- SECCIÓN HISTORIAL ASISTENCIA -->
-<div id="seccion-historial-asistencia" class="seccion">
-  <div class="card">
-    <h2>🔍 Filtrar Asistencia</h2>
-    <div class="form-grid">
-      <div>
-        <label>Por mes</label>
-        <select id="asist_filtro_mes">
-          <option value="">Seleccionar mes...</option>
-          <option value="1">Enero</option>
-          <option value="2">Febrero</option>
-          <option value="3">Marzo</option>
-          <option value="4">Abril</option>
-          <option value="5">Mayo</option>
-          <option value="6">Junio</option>
-          <option value="7">Julio</option>
-          <option value="8">Agosto</option>
-          <option value="9">Septiembre</option>
-          <option value="10">Octubre</option>
-          <option value="11">Noviembre</option>
-          <option value="12">Diciembre</option>
-        </select>
+  <div class="container">
+    
+    <!-- SECCIÓN DASHBOARD -->
+    <div id="seccion-dashboard" class="seccion activa">
+      <div class="resumen-caja">
+        <div class="caja-card"><h3>👥 Miembros Activos</h3><div class="monto" id="dash_activos">0</div></div>
+        <div class="caja-card"><h3>⚠️ Por Vencer</h3><div class="monto" id="dash_por_vencer">0</div></div>
+        <div class="caja-card"><h3>❌ Vencidos</h3><div class="monto" id="dash_vencidos">0</div></div>
       </div>
-      <div>
-        <label>Año</label>
-        <input type="number" id="asist_filtro_anio" value="2026">
+      <div class="resumen-caja">
+        <div class="caja-card"><h3>✅ Asistencia Hoy</h3><div class="monto" id="dash_asistencia">0</div></div>
+        <div class="caja-card"><h3>💰 Recaudado Hoy</h3><div class="monto" id="dash_recaudado">$0</div></div>
+        <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="dash_pagos">0</div></div>
       </div>
-      <div>
-        <label>Fecha inicio</label>
-        <input type="date" id="asist_filtro_fecha_inicio">
-      </div>
-      <div>
-        <label>Fecha fin</label>
-        <input type="date" id="asist_filtro_fecha_fin">
+
+      <div class="card">
+        <h2>⚠️ Miembros Próximos a Vencer (7 días)</h2>
+        <table>
+          <thead>
+            <tr><th>Nombre</th><th>Documento</th><th>Plan</th><th>Vence</th></tr>
+          </thead>
+          <tbody id="dash_tabla_vencer"></tbody>
+        </table>
       </div>
     </div>
-    <button onclick="filtrarAsistenciaPorMes()">📅 Filtrar por mes</button>
-    <button onclick="filtrarAsistenciaPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
-    <button onclick="cargarHistorialAsistencia()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
-  </div>
-
-  <div class="resumen-caja">
-    <div class="caja-card"><h3>✅ Total Asistencias</h3><div class="monto" id="asist_total">0</div></div>
-    <div class="caja-card"><h3>📅 Fecha</h3><div class="monto" style="font-size:16px" id="asist_fecha"></div></div>
-  </div>
-
-  <div class="card">
-    <h2>Historial de Asistencia</h2>
-    <table>
-      <thead>
-        <tr><th>Miembro</th><th>Documento</th><th>Fecha</th><th>Hora Entrada</th><th>Hora Salida</th></tr>
-      </thead>
-      <tbody id="tablaHistorialAsistencia"></tbody>
-    </table>
-  </div>
-</div>
-
-  <div class="container">
-    <!-- SECCIÓN DASHBOARD -->
-<div id="seccion-dashboard" class="seccion activa">
-  <div class="resumen-caja">
-    <div class="caja-card"><h3>👥 Miembros Activos</h3><div class="monto" id="dash_activos">0</div></div>
-    <div class="caja-card"><h3>⚠️ Por Vencer</h3><div class="monto" id="dash_por_vencer">0</div></div>
-    <div class="caja-card"><h3>❌ Vencidos</h3><div class="monto" id="dash_vencidos">0</div></div>
-  </div>
-  <div class="resumen-caja">
-    <div class="caja-card"><h3>✅ Asistencia Hoy</h3><div class="monto" id="dash_asistencia">0</div></div>
-    <div class="caja-card"><h3>💰 Recaudado Hoy</h3><div class="monto" id="dash_recaudado">$0</div></div>
-    <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="dash_pagos">0</div></div>
-  </div>
-
-  <div class="card">
-    <h2>⚠️ Miembros Próximos a Vencer (7 días)</h2>
-    <table>
-      <thead>
-        <tr><th>Nombre</th><th>Documento</th><th>Plan</th><th>Vence</th></tr>
-      </thead>
-      <tbody id="dash_tabla_vencer"></tbody>
-    </table>
-  </div>
-</div>
 
     <!-- SECCIÓN MIEMBROS -->
-    <div id="seccion-miembros" class="seccion activa">
+    <div id="seccion-miembros" class="seccion">
       <div class="card">
         <h2>Registrar Nuevo Miembro</h2>
         <div class="form-grid">
@@ -168,7 +106,7 @@
 
       <div class="card">
         <h2>Miembros Registrados</h2>
-        <input type="text" id="buscador" placeholder="🔍 Buscar por nombre o documento..." onkeyup="buscarMiembro()" style="margin-bottom: 15px;">
+        <input type="text" id="buscador" placeholder="🔍 Buscar por nombre o documento..." onkeyup="buscarMiembro()" style="margin-bottom: 15px; width: 100%;">
         <table>
           <thead>
             <tr>
@@ -203,46 +141,104 @@
       </div>
     </div>
 
+    <!-- SECCIÓN HISTORIAL DE ASISTENCIA -->
+    <div id="seccion-historial-asistencia" class="seccion">
+      <div class="card">
+        <h2>🔍 Filtrar Historial de Asistencia</h2>
+        <div class="form-grid">
+          <div>
+            <label>Por mes</label>
+            <select id="asist_filtro_mes">
+              <option value="">Seleccionar mes...</option>
+              <option value="1">Enero</option>
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+          </div>
+          <div>
+            <label>Año</label>
+            <input type="number" id="asist_filtro_anio" value="2026">
+          </div>
+          <div>
+            <label>Fecha inicio</label>
+            <input type="date" id="asist_filtro_fecha_inicio">
+          </div>
+          <div>
+            <label>Fecha fin</label>
+            <input type="date" id="asist_filtro_fecha_fin">
+          </div>
+        </div>
+        <button onclick="filtrarAsistenciaPorMes()">📅 Filtrar por mes</button>
+        <button onclick="filtrarAsistenciaPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
+        <button onclick="cargarHistorialAsistencia()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
+      </div>
+
+      <div class="resumen-caja">
+        <div class="caja-card"><h3>📋 Total Registros</h3><div class="monto" id="asist_total">0</div></div>
+        <div class="caja-card"><h3>📅 Fecha Hoy</h3><div class="monto" style="font-size:16px" id="asist_fecha"></div></div>
+      </div>
+
+      <div class="card">
+        <h2>Historial de Asistencia</h2>
+        <table>
+          <thead>
+            <tr><th>Miembro</th><th>Documento</th><th>Fecha</th><th>Hora Entrada</th><th>Hora Salida</th></tr>
+          </thead>
+          <tbody id="tablaHistorialAsistencia"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- SECCIÓN CAJA -->
     <div id="seccion-caja" class="seccion">
-        <div class="card">
-  <h2>🔍 Filtrar Pagos</h2>
-  <div class="form-grid">
-    <div>
-      <label>Por mes</label>
-      <select id="filtro_mes">
-        <option value="">Seleccionar mes...</option>
-        <option value="1">Enero</option>
-        <option value="2">Febrero</option>
-        <option value="3">Marzo</option>
-        <option value="4">Abril</option>
-        <option value="5">Mayo</option>
-        <option value="6">Junio</option>
-        <option value="7">Julio</option>
-        <option value="8">Agosto</option>
-        <option value="9">Septiembre</option>
-        <option value="10">Octubre</option>
-        <option value="11">Noviembre</option>
-        <option value="12">Diciembre</option>
-      </select>
-    </div>
-    <div>
-      <label>Año</label>
-      <input type="number" id="filtro_anio" value="2026">
-    </div>
-    <div>
-      <label>Fecha inicio</label>
-      <input type="date" id="filtro_fecha_inicio">
-    </div>
-    <div>
-      <label>Fecha fin</label>
-      <input type="date" id="filtro_fecha_fin">
-    </div>
-  </div>
-  <button onclick="filtrarPorMes()">📅 Filtrar por mes</button>
-  <button onclick="filtrarPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
-  <button onclick="cargarCaja()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
-</div>
+      <div class="card">
+        <h2>🔍 Filtrar Pagos</h2>
+        <div class="form-grid">
+          <div>
+            <label>Por mes</label>
+            <select id="filtro_mes">
+              <option value="">Seleccionar mes...</option>
+              <option value="1">Enero</option>
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+          </div>
+          <div>
+            <label>Año</label>
+            <input type="number" id="filtro_anio" value="2026">
+          </div>
+          <div>
+            <label>Fecha inicio</label>
+            <input type="date" id="filtro_fecha_inicio">
+          </div>
+          <div>
+            <label>Fecha fin</label>
+            <input type="date" id="filtro_fecha_fin">
+          </div>
+        </div>
+        <button onclick="filtrarPorMes()">📅 Filtrar por mes</button>
+        <button onclick="filtrarPorRango()" style="background: #28a745; margin-left: 10px;">📆 Filtrar por rango</button>
+        <button onclick="cargarCaja()" style="background: #6c757d; margin-left: 10px;">🔄 Ver todos</button>
+      </div>
+
       <div class="resumen-caja">
         <div class="caja-card"><h3>💰 Total Hoy</h3><div class="monto" id="totalHoy">$0</div></div>
         <div class="caja-card"><h3>📋 Pagos Hoy</h3><div class="monto" id="cantidadHoy">0</div></div>
@@ -259,14 +255,14 @@
           <div>
             <label>Concepto</label>
             <select id="pago_concepto">
-  <option value="">Seleccionar concepto...</option>
-  <option value="mensualidad">Mensualidad</option>
-  <option value="trimestral">Trimestral</option>
-  <option value="familiar">Familiar</option>
-  <option value="inscripcion">Inscripción</option>
-  <option value="clase">Clase</option>
-  <option value="otro">Otro</option>
-</select>
+              <option value="">Seleccionar concepto...</option>
+              <option value="mensualidad">Mensualidad</option>
+              <option value="trimestral">Trimestral</option>
+              <option value="familiar">Familiar</option>
+              <option value="inscripcion">Inscripción</option>
+              <option value="clase">Clase</option>
+              <option value="otro">Otro</option>
+            </select>
           </div>
           <div><label>Monto</label><input type="number" id="pago_monto" placeholder="Ej: 50000"></div>
           <div>
@@ -351,6 +347,8 @@
           <label>Concepto</label>
           <select id="edit_pago_concepto">
             <option value="mensualidad">Mensualidad</option>
+            <option value="trimestral">Trimestral</option>
+            <option value="familiar">Familiar</option>
             <option value="inscripcion">Inscripción</option>
             <option value="clase">Clase</option>
             <option value="otro">Otro</option>
@@ -380,198 +378,139 @@
   </div>
 
   <script>
+    const hoyISO = new Date().toISOString().split('T')[0];
+
     document.addEventListener('DOMContentLoaded', () => {
-  const role = localStorage.getItem('userRole');
+      const role = localStorage.getItem('userRole');
 
-  // Si entra como invitado, oculta los formularios y botones de registro/edición
-  if (role === 'guest') {
-    document.querySelectorAll('form, button[onclick^="registrar"], .btn-editar, .btn-eliminar').forEach(el => {
-      el.style.display = 'none';
+      if (role === 'guest') {
+        document.querySelectorAll('form, button[onclick^="registrar"], .btn-editar, .btn-eliminar').forEach(el => {
+          el.style.display = 'none';
+        });
+      }
+
+      // Fechas por defecto
+      const fechaHoyTexto = new Date().toLocaleDateString('es-CO');
+      if (document.getElementById('fechaHoy')) document.getElementById('fechaHoy').textContent = fechaHoyTexto;
+      if (document.getElementById('asist_fecha')) document.getElementById('asist_fecha').textContent = fechaHoyTexto;
+      if (document.getElementById('pago_fecha')) document.getElementById('pago_fecha').value = hoyISO;
+
+      // Carga inicial
+      cargarMiembros();
+      cargarDashboard();
     });
-  }
 
-  // Carga inicial de datos
-  cargarMiembros();
-  cargarDashboard();
-});
-    document.getElementById('asist_fecha').textContent = new Date().toLocaleDateString('es-CO');
-
-async function cargarHistorialAsistencia() {
-  const res = await fetch('/api/asistencia');
-  const lista = await res.json();
-  mostrarHistorialAsistencia(lista);
-}
-
-async function filtrarAsistenciaPorMes() {
-  const mes = document.getElementById('asist_filtro_mes').value;
-  const anio = document.getElementById('asist_filtro_anio').value;
-  if (!mes || !anio) return alert('Selecciona mes y año');
-  const res = await fetch(`/api/asistencia/mes?mes=${mes}&anio=${anio}`);
-  const lista = await res.json();
-  mostrarHistorialAsistencia(lista);
-}
-
-async function filtrarAsistenciaPorRango() {
-  const fechaInicio = document.getElementById('asist_filtro_fecha_inicio').value;
-  const fechaFin = document.getElementById('asist_filtro_fecha_fin').value || fechaInicio;
-  if (!fechaInicio) return alert('Selecciona al menos una fecha de inicio');
-  const res = await fetch(`/api/asistencia/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-  const lista = await res.json();
-  mostrarHistorialAsistencia(lista);
-}
-
-function mostrarHistorialAsistencia(lista) {
-  document.getElementById('asist_total').textContent = lista.length;
-  const tbody = document.getElementById('tablaHistorialAsistencia');
-  tbody.innerHTML = lista.length === 0
-    ? '<tr><td colspan="5" style="text-align:center">No hay registros</td></tr>'
-    : lista.map(a => `
-      <tr>
-        <td>${a.nombre}</td>
-        <td>${a.documento}</td>
-        <td>${a.fecha ? a.fecha.split('T')[0] : '---'}</td>
-        <td>${a.hora_entrada || '---'}</td>
-        <td>${a.hora_salida || '---'}</td>
-      </tr>
-    `).join('');
-}
     async function logout() {
-  await fetch('/api/auth/logout', { method: 'POST' });
-  window.location.href = '/login.html';
-}
-    document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-CO');
-
-    // Fecha de hoy por defecto en el formulario de pagos
-    const hoy = new Date().toISOString().split('T')[0];
-    document.getElementById('pago_fecha').value = hoy;
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login.html';
+    }
 
     function mostrarSeccion(nombre, btn) {
-        if (nombre === 'historial-asistencia') cargarHistorialAsistencia();
       document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      document.getElementById('seccion-' + nombre).classList.add('activa');
-      btn.classList.add('active');
+      
+      const seccionTarget = document.getElementById('seccion-' + nombre);
+      if (seccionTarget) seccionTarget.classList.add('activa');
+      if (btn) btn.classList.add('active');
+
       if (nombre === 'dashboard') cargarDashboard();
       if (nombre === 'asistencia') cargarAsistenciaHoy();
+      if (nombre === 'historial-asistencia') cargarHistorialAsistencia();
       if (nombre === 'caja') cargarCaja();
     }
 
     function cerrarModal(id) {
       document.getElementById(id).style.display = 'none';
     }
+
     function buscarMiembro() {
-  const texto = document.getElementById('buscador').value.toLowerCase();
-  const filas = document.querySelectorAll('#tablaMiembros tr');
-  filas.forEach(fila => {
-    const contenido = fila.textContent.toLowerCase();
-    fila.style.display = contenido.includes(texto) ? '' : 'none';
-  });
-}
-async function cargarDashboard() {
-  const [miembrosRes, asistenciaRes, totalRes, pagosRes] = await Promise.all([
-    fetch('/api/miembros'),
-    fetch('/api/asistencia/hoy'),
-    fetch('/api/pagos/total-hoy'),
-    fetch('/api/pagos/hoy')
-  ]);
-  const miembros = await miembrosRes.json();
-  const asistencia = await asistenciaRes.json();
-  const { total } = await totalRes.json();
-  const pagos = await pagosRes.json();
+      const texto = document.getElementById('buscador').value.toLowerCase();
+      const filas = document.querySelectorAll('#tablaMiembros tr');
+      filas.forEach(fila => {
+        const contenido = fila.textContent.toLowerCase();
+        fila.style.display = contenido.includes(texto) ? '' : 'none';
+      });
+    }
 
-  const hoy = new Date();
-  const en7dias = new Date();
-  en7dias.setDate(hoy.getDate() + 7);
+    async function cargarDashboard() {
+      try {
+        const [miembrosRes, asistenciaRes, totalRes, pagosRes] = await Promise.all([
+          fetch('/api/miembros'),
+          fetch('/api/asistencia/hoy'),
+          fetch('/api/pagos/total-hoy'),
+          fetch('/api/pagos/hoy')
+        ]);
 
-  const activos = miembros.filter(m => m.estado === 'activo');
-  const vencidos = miembros.filter(m => m.estado === 'vencido');
-  const porVencer = miembros.filter(m => {
-    const vence = new Date(m.fecha_vencimiento);
-    return m.estado === 'activo' && vence <= en7dias && vence >= hoy;
-  });
+        const miembros = await miembrosRes.json();
+        const asistencia = await asistenciaRes.json();
+        const { total } = await totalRes.json();
+        const pagos = await pagosRes.json();
 
-  document.getElementById('dash_activos').textContent = activos.length;
-  document.getElementById('dash_vencidos').textContent = vencidos.length;
-  document.getElementById('dash_por_vencer').textContent = porVencer.length;
-  document.getElementById('dash_asistencia').textContent = asistencia.length;
-  document.getElementById('dash_recaudado').textContent = '$' + Number(total).toLocaleString('es-CO');
-  document.getElementById('dash_pagos').textContent = pagos.length;
+        const hoy = new Date();
+        const en7dias = new Date();
+        en7dias.setDate(hoy.getDate() + 7);
 
-  const tbody = document.getElementById('dash_tabla_vencer');
-  tbody.innerHTML = porVencer.length === 0
-    ? '<tr><td colspan="4" style="text-align:center">No hay miembros próximos a vencer</td></tr>'
-    : porVencer.map(m => `
-      <tr>
-        <td>${m.nombre}</td>
-        <td>${m.documento}</td>
-        <td>${m.plan}</td>
-        <td>${m.fecha_vencimiento.split('T')[0]}</td>
-      </tr>
-    `).join('');
-}
-async function filtrarPorMes() {
-  const mes = document.getElementById('filtro_mes').value;
-  const anio = document.getElementById('filtro_anio').value;
-  if (!mes || !anio) return alert('Selecciona mes y año');
-  const res = await fetch(`/api/pagos/mes?mes=${mes}&anio=${anio}`);
-  const data = await res.json();
-  mostrarPagosFiltrados(data.pagos, data.total);
-}
+        const activos = miembros.filter(m => m.estado === 'activo');
+        const vencidos = miembros.filter(m => m.estado === 'vencido');
+        const porVencer = miembros.filter(m => {
+          const vence = new Date(m.fecha_vencimiento);
+          return m.estado === 'activo' && vence <= en7dias && vence >= hoy;
+        });
 
-async function filtrarPorRango() {
-  const fechaInicio = document.getElementById('filtro_fecha_inicio').value;
-  const fechaFin = document.getElementById('filtro_fecha_fin').value;
-  if (!fechaInicio || !fechaFin) return alert('Selecciona fecha inicio y fecha fin');
-  const res = await fetch(`/api/pagos/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
-  const data = await res.json();
-  mostrarPagosFiltrados(data.pagos, data.total);
-}
+        document.getElementById('dash_activos').textContent = activos.length;
+        document.getElementById('dash_vencidos').textContent = vencidos.length;
+        document.getElementById('dash_por_vencer').textContent = porVencer.length;
+        document.getElementById('dash_asistencia').textContent = asistencia.length;
+        document.getElementById('dash_recaudado').textContent = '$' + Number(total || 0).toLocaleString('es-CO');
+        document.getElementById('dash_pagos').textContent = pagos.length;
 
-function mostrarPagosFiltrados(pagos, total) {
-  document.getElementById('totalHoy').textContent = '$' + Number(total || 0).toLocaleString('es-CO');
-  document.getElementById('cantidadHoy').textContent = pagos.length;
-  const tbody = document.getElementById('tablaPagos');
-  tbody.innerHTML = pagos.map(p => `
-    <tr>
-      <td>${p.nombre}</td>
-      <td>${p.concepto}</td>
-      <td>$${Number(p.monto).toLocaleString('es-CO')}</td>
-      <td>${p.metodo_pago}</td>
-      <td>${p.fecha ? p.fecha.split('T')[0] : '---'}</td>
-      <td>${p.fecha_finalizacion ? p.fecha_finalizacion.split('T')[0] : '---'}</td>
-      <td>
-        <button class="btn-editar" onclick="abrirEditarPago(${p.id})">✏️ Editar</button>
-        <button class="btn-eliminar" onclick="eliminarPago(${p.id})">🗑️ Eliminar</button>
-      </td>
-    </tr>
-  `).join('');
-}
+        const tbody = document.getElementById('dash_tabla_vencer');
+        tbody.innerHTML = porVencer.length === 0
+          ? '<tr><td colspan="4" style="text-align:center">No hay miembros próximos a vencer</td></tr>'
+          : porVencer.map(m => `
+            <tr>
+              <td>${m.nombre}</td>
+              <td>${m.documento}</td>
+              <td>${m.plan}</td>
+              <td>${m.fecha_vencimiento ? m.fecha_vencimiento.split('T')[0] : '---'}</td>
+            </tr>
+          `).join('');
+      } catch (err) {
+        console.error("Error al cargar dashboard:", err);
+      }
+    }
 
     async function cargarMiembros() {
-      const res = await fetch('/api/miembros');
-      const miembros = await res.json();
-      const tbody = document.getElementById('tablaMiembros');
-      tbody.innerHTML = miembros.map(m => `
-        <tr>
-          <td>${m.nombre}</td>
-          <td>${m.documento}</td>
-          <td>${m.telefono}</td>
-          <td>${m.plan}</td>
-          <td>${m.fecha_vencimiento.split('T')[0]}</td>
-          <td><span class="badge ${m.estado}">${m.estado}</span></td>
-          <td>
-            <button class="btn-editar" onclick="abrirEditar(${m.id})"> Editar</button>
-            <button class="btn-eliminar" onclick="eliminarMiembro(${m.id})">Eliminar</button>
-          </td>
-        </tr>
-      `).join('');
+      try {
+        const res = await fetch('/api/miembros');
+        const miembros = await res.json();
+        const tbody = document.getElementById('tablaMiembros');
+        
+        tbody.innerHTML = miembros.map(m => `
+          <tr>
+            <td>${m.nombre}</td>
+            <td>${m.documento}</td>
+            <td>${m.telefono}</td>
+            <td>${m.plan}</td>
+            <td>${m.fecha_vencimiento ? m.fecha_vencimiento.split('T')[0] : '---'}</td>
+            <td><span class="badge ${m.estado}">${m.estado}</span></td>
+            <td>
+              <button class="btn-editar" onclick="abrirEditar(${m.id})">Editar</button>
+              <button class="btn-eliminar" onclick="eliminarMiembro(${m.id})">Eliminar</button>
+            </td>
+          </tr>
+        `).join('');
 
-      const activos = miembros.filter(m => m.estado === 'activo');
-      const options = '<option value="">Seleccionar miembro...</option>' +
-        activos.map(m => `<option value="${m.id}">${m.nombre} - ${m.documento}</option>`).join('');
-      document.getElementById('miembro_asistencia').innerHTML = options;
-      document.getElementById('pago_miembro').innerHTML = options;
-      document.getElementById('edit_pago_miembro').innerHTML = options;
+        const activos = miembros.filter(m => m.estado === 'activo');
+        const options = '<option value="">Seleccionar miembro...</option>' +
+          activos.map(m => `<option value="${m.id}">${m.nombre} - ${m.documento}</option>`).join('');
+        
+        document.getElementById('miembro_asistencia').innerHTML = options;
+        document.getElementById('pago_miembro').innerHTML = options;
+        document.getElementById('edit_pago_miembro').innerHTML = options;
+      } catch (err) {
+        console.error("Error al cargar miembros:", err);
+      }
     }
 
     async function registrarMiembro() {
@@ -584,6 +523,7 @@ function mostrarPagosFiltrados(pagos, total) {
         fecha_inicio: document.getElementById('fecha_inicio').value,
         fecha_vencimiento: document.getElementById('fecha_vencimiento').value
       };
+
       await fetch('/api/miembros', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -608,8 +548,8 @@ function mostrarPagosFiltrados(pagos, total) {
       document.getElementById('edit_email').value = m.email;
       document.getElementById('edit_plan').value = m.plan;
       document.getElementById('edit_estado').value = m.estado;
-      document.getElementById('edit_fecha_inicio').value = m.fecha_inicio.split('T')[0];
-      document.getElementById('edit_fecha_vencimiento').value = m.fecha_vencimiento.split('T')[0];
+      document.getElementById('edit_fecha_inicio').value = m.fecha_inicio ? m.fecha_inicio.split('T')[0] : '';
+      document.getElementById('edit_fecha_vencimiento').value = m.fecha_vencimiento ? m.fecha_vencimiento.split('T')[0] : '';
       document.getElementById('modalEditar').style.display = 'block';
     }
 
@@ -634,6 +574,7 @@ function mostrarPagosFiltrados(pagos, total) {
       cargarMiembros();
     }
 
+    /* FUNCIONES DE ASISTENCIA */
     async function registrarEntrada() {
       const miembro_id = document.getElementById('miembro_asistencia').value;
       if (!miembro_id) return alert('Selecciona un miembro');
@@ -667,6 +608,47 @@ function mostrarPagosFiltrados(pagos, total) {
       `).join('');
     }
 
+    async function cargarHistorialAsistencia() {
+      const res = await fetch('/api/asistencia');
+      const lista = await res.json();
+      mostrarHistorialAsistencia(lista);
+    }
+
+    async function filtrarAsistenciaPorMes() {
+      const mes = document.getElementById('asist_filtro_mes').value;
+      const anio = document.getElementById('asist_filtro_anio').value;
+      if (!mes || !anio) return alert('Selecciona mes y año');
+      const res = await fetch(`/api/asistencia/mes?mes=${mes}&anio=${anio}`);
+      const lista = await res.json();
+      mostrarHistorialAsistencia(lista);
+    }
+
+    async function filtrarAsistenciaPorRango() {
+      const fechaInicio = document.getElementById('asist_filtro_fecha_inicio').value;
+      const fechaFin = document.getElementById('asist_filtro_fecha_fin').value || fechaInicio;
+      if (!fechaInicio) return alert('Selecciona al menos una fecha de inicio');
+      const res = await fetch(`/api/asistencia/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+      const lista = await res.json();
+      mostrarHistorialAsistencia(lista);
+    }
+
+    function mostrarHistorialAsistencia(lista) {
+      document.getElementById('asist_total').textContent = lista.length;
+      const tbody = document.getElementById('tablaHistorialAsistencia');
+      tbody.innerHTML = lista.length === 0
+        ? '<tr><td colspan="5" style="text-align:center">No hay registros</td></tr>'
+        : lista.map(a => `
+          <tr>
+            <td>${a.nombre}</td>
+            <td>${a.documento}</td>
+            <td>${a.fecha ? a.fecha.split('T')[0] : '---'}</td>
+            <td>${a.hora_entrada || '---'}</td>
+            <td>${a.hora_salida || '---'}</td>
+          </tr>
+        `).join('');
+    }
+
+    /* FUNCIONES DE CAJA Y PAGOS */
     async function registrarPago() {
       const data = {
         miembro_id: document.getElementById('pago_miembro').value,
@@ -696,7 +678,7 @@ function mostrarPagosFiltrados(pagos, total) {
       document.getElementById('edit_pago_concepto').value = p.concepto;
       document.getElementById('edit_pago_monto').value = p.monto;
       document.getElementById('edit_pago_metodo').value = p.metodo_pago;
-      document.getElementById('edit_pago_fecha').value = p.fecha.split('T')[0];
+      document.getElementById('edit_pago_fecha').value = p.fecha ? p.fecha.split('T')[0] : '';
       document.getElementById('edit_pago_fecha_finalizacion').value = p.fecha_finalizacion ? p.fecha_finalizacion.split('T')[0] : '';
       document.getElementById('edit_pago_observaciones').value = p.observaciones || '';
       document.getElementById('modalEditarPago').style.display = 'block';
@@ -736,10 +718,32 @@ function mostrarPagosFiltrados(pagos, total) {
       const pagos = await pagosRes.json();
       const { total } = await totalRes.json();
 
-      const pagosHoy = pagos.filter(p => p.fecha && p.fecha.split('T')[0] === hoy);
-      document.getElementById('totalHoy').textContent = '$' + Number(total).toLocaleString('es-CO');
-      document.getElementById('cantidadHoy').textContent = pagosHoy.length;
+      const pagosHoy = pagos.filter(p => p.fecha && p.fecha.split('T')[0] === hoyISO);
+      mostrarPagosFiltrados(pagos, total, pagosHoy.length);
+    }
 
+    async function filtrarPorMes() {
+      const mes = document.getElementById('filtro_mes').value;
+      const anio = document.getElementById('filtro_anio').value;
+      if (!mes || !anio) return alert('Selecciona mes y año');
+      const res = await fetch(`/api/pagos/mes?mes=${mes}&anio=${anio}`);
+      const data = await res.json();
+      mostrarPagosFiltrados(data.pagos, data.total);
+    }
+
+    async function filtrarPorRango() {
+      const fechaInicio = document.getElementById('filtro_fecha_inicio').value;
+      const fechaFin = document.getElementById('filtro_fecha_fin').value;
+      if (!fechaInicio || !fechaFin) return alert('Selecciona fecha inicio y fecha fin');
+      const res = await fetch(`/api/pagos/rango?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
+      const data = await res.json();
+      mostrarPagosFiltrados(data.pagos, data.total);
+    }
+
+    function mostrarPagosFiltrados(pagos, total, conteoEspecifico = null) {
+      document.getElementById('totalHoy').textContent = '$' + Number(total || 0).toLocaleString('es-CO');
+      document.getElementById('cantidadHoy').textContent = conteoEspecifico !== null ? conteoEspecifico : pagos.length;
+      
       const tbody = document.getElementById('tablaPagos');
       tbody.innerHTML = pagos.map(p => `
         <tr>
@@ -756,15 +760,6 @@ function mostrarPagosFiltrados(pagos, total) {
         </tr>
       `).join('');
     }
-document.getElementById('cantidadHoy').textContent = pagosHoy.length;
-      mostrarPagosFiltrados(pagos, total);
-    }
-
-    // Carga inicial al abrir la aplicación
-    document.addEventListener('DOMContentLoaded', () => {
-      cargarMiembros();
-      cargarDashboard();
-    });
   </script>
 </body>
 </html>
