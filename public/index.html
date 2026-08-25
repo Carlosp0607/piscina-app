@@ -380,6 +380,20 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  const role = localStorage.getItem('userRole');
+
+  // Si entra como invitado, oculta los formularios y botones de registro/edición
+  if (role === 'guest') {
+    document.querySelectorAll('form, button[onclick^="registrar"], .btn-editar, .btn-eliminar').forEach(el => {
+      el.style.display = 'none';
+    });
+  }
+
+  // Carga inicial de datos
+  cargarMiembros();
+  cargarDashboard();
+});
     document.getElementById('asist_fecha').textContent = new Date().toLocaleDateString('es-CO');
 
 async function cargarHistorialAsistencia() {
