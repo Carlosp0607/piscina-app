@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestión de Gimnasio</title>
+  <title>Gestión de Piscina</title>
   <style>
-    /* Agrega aquí tus estilos CSS personalizados si no los tienes en un archivo externo */
     body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f9; }
-    header { display: flex; justify-content: space-between; align-items: center; background: #343a40; color: #fff; padding: 15px 20px; border-radius: 8px; }
-    nav button { background: #495057; color: white; border: none; padding: 10px 15px; margin-right: 5px; cursor: pointer; border-radius: 4px; }
-    nav button.active { background: #007bff; }
+    header { display: flex; justify-content: space-between; align-items: center; background: #0077b6; color: #fff; padding: 15px 20px; border-radius: 8px; }
+    nav button { background: #023e8a; color: white; border: none; padding: 10px 15px; margin-right: 5px; cursor: pointer; border-radius: 4px; }
+    nav button.active { background: #00b4d8; }
     .container { margin-top: 20px; }
     .seccion { display: none; }
     .seccion.activa { display: block; }
@@ -21,7 +20,7 @@
     .form-grid div { display: flex; flex-direction: column; }
     label { font-weight: bold; margin-bottom: 5px; font-size: 14px; }
     input, select, textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-    button { cursor: pointer; background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; }
+    button { cursor: pointer; background: #0077b6; color: white; border: none; padding: 10px 15px; border-radius: 4px; }
     button:hover { opacity: 0.9; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #dee2e6; padding: 10px; text-align: left; }
@@ -42,10 +41,10 @@
 <body>
 
   <header>
-    <h1>Control de Gimnasio</h1>
+    <h1>Control de Piscina</h1>
     <nav>
       <button class="active" onclick="mostrarSeccion('dashboard', this)">Dashboard</button>
-      <button onclick="mostrarSeccion('miembros', this)">Miembros</button>
+      <button onclick="mostrarSeccion('miembros', this)">Usuarios / Alumnos</button>
       <button onclick="mostrarSeccion('asistencia', this)">Asistencia</button>
       <button onclick="mostrarSeccion('historial-asistencia', this)">Historial Asistencia</button>
       <button onclick="mostrarSeccion('caja', this)">Caja y Pagos</button>
@@ -58,7 +57,7 @@
     <!-- SECCIÓN DASHBOARD -->
     <div id="seccion-dashboard" class="seccion activa">
       <div class="resumen-caja">
-        <div class="caja-card"><h3>👥 Miembros Activos</h3><div class="monto" id="dash_activos">0</div></div>
+        <div class="caja-card"><h3>🏊 Usuarios Activos</h3><div class="monto" id="dash_activos">0</div></div>
         <div class="caja-card"><h3>⚠️ Por Vencer</h3><div class="monto" id="dash_por_vencer">0</div></div>
         <div class="caja-card"><h3>❌ Vencidos</h3><div class="monto" id="dash_vencidos">0</div></div>
       </div>
@@ -69,7 +68,7 @@
       </div>
 
       <div class="card">
-        <h2>⚠️ Miembros Próximos a Vencer (7 días)</h2>
+        <h2>⚠️ Usuarios Próximos a Vencer (7 días)</h2>
         <table>
           <thead>
             <tr><th>Nombre</th><th>Documento</th><th>Plan</th><th>Vence</th></tr>
@@ -82,30 +81,32 @@
     <!-- SECCIÓN MIEMBROS -->
     <div id="seccion-miembros" class="seccion">
       <div class="card">
-        <h2>Registrar Nuevo Miembro</h2>
+        <h2>Registrar Nuevo Usuario / Alumno</h2>
         <div class="form-grid">
           <div><label>Nombre completo</label><input type="text" id="nombre" placeholder="Ej: Carlos Pérez"></div>
           <div><label>Documento</label><input type="text" id="documento" placeholder="Ej: 1050332855"></div>
           <div><label>Teléfono</label><input type="text" id="telefono" placeholder="Ej: 3001234567"></div>
           <div><label>Email</label><input type="email" id="email" placeholder="Ej: correo@email.com"></div>
           <div>
-            <label>Plan</label>
+            <label>Plan / Servicio</label>
             <select id="plan">
-              <option value="">Seleccionar plan</option>
-              <option value="mensual">Mensual</option>
-              <option value="trimestral">Trimestral</option>
-              <option value="familiar">Familiar</option>
+              <option value="">Seleccionar plan...</option>
+              <option value="clases_natacion">Clases de Natación (Mensual)</option>
+              <option value="piscina_libre">Piscina Libre (Mensual)</option>
+              <option value="tiquetera">Tiquetera por Sesiones</option>
+              <option value="plan_familiar">Plan Familiar</option>
+              <option value="entrada_dia">Pasada / Entrada Libre Día</option>
             </select>
           </div>
           <div></div>
           <div><label>Fecha de inicio</label><input type="date" id="fecha_inicio"></div>
           <div><label>Fecha de vencimiento</label><input type="date" id="fecha_vencimiento"></div>
         </div>
-        <button onclick="registrarMiembro()">Registrar Miembro</button>
+        <button onclick="registrarMiembro()">Registrar Usuario</button>
       </div>
 
       <div class="card">
-        <h2>Miembros Registrados</h2>
+        <h2>Usuarios Registrados</h2>
         <input type="text" id="buscador" placeholder="🔍 Buscar por nombre o documento..." onkeyup="buscarMiembro()" style="margin-bottom: 15px; width: 100%;">
         <table>
           <thead>
@@ -121,20 +122,20 @@
     <!-- SECCIÓN ASISTENCIA -->
     <div id="seccion-asistencia" class="seccion">
       <div class="card">
-        <h2>Registrar Entrada</h2>
+        <h2>Registrar Entrada a Piscina</h2>
         <div class="form-grid">
           <div>
-            <label>Seleccionar Miembro</label>
-            <select id="miembro_asistencia"><option value="">Seleccionar miembro...</option></select>
+            <label>Seleccionar Usuario</label>
+            <select id="miembro_asistencia"><option value="">Seleccionar usuario...</option></select>
           </div>
         </div>
         <button onclick="registrarEntrada()">✅ Registrar Entrada</button>
       </div>
       <div class="card">
-        <h2>Asistencia de Hoy</h2>
+        <h2>Ingresos de Hoy</h2>
         <table>
           <thead>
-            <tr><th>Miembro</th><th>Documento</th><th>Hora Entrada</th><th>Hora Salida</th><th>Acciones</th></tr>
+            <tr><th>Usuario</th><th>Documento</th><th>Hora Entrada</th><th>Hora Salida</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaAsistencia"></tbody>
         </table>
@@ -183,15 +184,15 @@
       </div>
 
       <div class="resumen-caja">
-        <div class="caja-card"><h3>📋 Total Registros</h3><div class="monto" id="asist_total">0</div></div>
+        <div class="caja-card"><h3>📋 Total Ingresos</h3><div class="monto" id="asist_total">0</div></div>
         <div class="caja-card"><h3>📅 Fecha Hoy</h3><div class="monto" style="font-size:16px" id="asist_fecha"></div></div>
       </div>
 
       <div class="card">
-        <h2>Historial de Asistencia</h2>
+        <h2>Historial de Asistencia a la Piscina</h2>
         <table>
           <thead>
-            <tr><th>Miembro</th><th>Documento</th><th>Fecha</th><th>Hora Entrada</th><th>Hora Salida</th></tr>
+            <tr><th>Usuario</th><th>Documento</th><th>Fecha</th><th>Hora Entrada</th><th>Hora Salida</th></tr>
           </thead>
           <tbody id="tablaHistorialAsistencia"></tbody>
         </table>
@@ -249,18 +250,19 @@
         <h2>Registrar Pago</h2>
         <div class="form-grid">
           <div>
-            <label>Miembro</label>
-            <select id="pago_miembro"><option value="">Seleccionar miembro...</option></select>
+            <label>Usuario</label>
+            <select id="pago_miembro"><option value="">Seleccionar usuario...</option></select>
           </div>
           <div>
             <label>Concepto</label>
             <select id="pago_concepto">
               <option value="">Seleccionar concepto...</option>
-              <option value="mensualidad">Mensualidad</option>
-              <option value="trimestral">Trimestral</option>
-              <option value="familiar">Familiar</option>
-              <option value="inscripcion">Inscripción</option>
-              <option value="clase">Clase</option>
+              <option value="mensualidad_natacion">Mensualidad Natación</option>
+              <option value="piscina_libre">Mensualidad Piscina Libre</option>
+              <option value="entrada_dia">Entrada Día / Pasadía</option>
+              <option value="tiquetera">Tiquetera de Entradas</option>
+              <option value="inscripcion">Inscripción / Matrícula</option>
+              <option value="alquiler_gorro">Gorro / Alquiler Equipo</option>
               <option value="otro">Otro</option>
             </select>
           </div>
@@ -278,7 +280,7 @@
           <div><label>Fecha de finalización</label><input type="date" id="pago_fecha_finalizacion"></div>
           <div style="grid-column: span 2">
             <label>Observaciones (opcional)</label>
-            <textarea id="pago_observaciones" rows="2" placeholder="Ej: Pago de abril"></textarea>
+            <textarea id="pago_observaciones" rows="2" placeholder="Ej: Pago de natación mes de abril"></textarea>
           </div>
         </div>
         <button onclick="registrarPago()">💰 Registrar Pago</button>
@@ -288,7 +290,7 @@
         <h2>Pagos Registrados</h2>
         <table>
           <thead>
-            <tr><th>Miembro</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Fecha Pago</th><th>Fecha Finalización</th><th>Acciones</th></tr>
+            <tr><th>Usuario</th><th>Concepto</th><th>Monto</th><th>Método</th><th>Fecha Pago</th><th>Fecha Finalización</th><th>Acciones</th></tr>
           </thead>
           <tbody id="tablaPagos"></tbody>
         </table>
@@ -297,10 +299,10 @@
 
   </div>
 
-  <!-- Modal Editar Miembro -->
+  <!-- Modal Editar Usuario -->
   <div class="modal" id="modalEditar">
     <div class="modal-content">
-      <h2>Editar Miembro</h2>
+      <h2>Editar Usuario</h2>
       <input type="hidden" id="edit_id">
       <div class="form-grid">
         <div><label>Nombre completo</label><input type="text" id="edit_nombre"></div>
@@ -308,11 +310,13 @@
         <div><label>Teléfono</label><input type="text" id="edit_telefono"></div>
         <div><label>Email</label><input type="email" id="edit_email"></div>
         <div>
-          <label>Plan</label>
+          <label>Plan / Servicio</label>
           <select id="edit_plan">
-            <option value="mensual">Mensual</option>
-            <option value="trimestral">Trimestral</option>
-            <option value="familiar">Familiar</option>
+            <option value="clases_natacion">Clases de Natación (Mensual)</option>
+            <option value="piscina_libre">Piscina Libre (Mensual)</option>
+            <option value="tiquetera">Tiquetera por Sesiones</option>
+            <option value="plan_familiar">Plan Familiar</option>
+            <option value="entrada_dia">Pasada / Entrada Libre Día</option>
           </select>
         </div>
         <div>
@@ -340,17 +344,18 @@
       <input type="hidden" id="edit_pago_id">
       <div class="form-grid">
         <div>
-          <label>Miembro</label>
-          <select id="edit_pago_miembro"><option value="">Seleccionar miembro...</option></select>
+          <label>Usuario</label>
+          <select id="edit_pago_miembro"><option value="">Seleccionar usuario...</option></select>
         </div>
         <div>
           <label>Concepto</label>
           <select id="edit_pago_concepto">
-            <option value="mensualidad">Mensualidad</option>
-            <option value="trimestral">Trimestral</option>
-            <option value="familiar">Familiar</option>
-            <option value="inscripcion">Inscripción</option>
-            <option value="clase">Clase</option>
+            <option value="mensualidad_natacion">Mensualidad Natación</option>
+            <option value="piscina_libre">Mensualidad Piscina Libre</option>
+            <option value="entrada_dia">Entrada Día / Pasadía</option>
+            <option value="tiquetera">Tiquetera de Entradas</option>
+            <option value="inscripcion">Inscripción / Matrícula</option>
+            <option value="alquiler_gorro">Gorro / Alquiler Equipo</option>
             <option value="otro">Otro</option>
           </select>
         </div>
@@ -466,7 +471,7 @@
 
         const tbody = document.getElementById('dash_tabla_vencer');
         tbody.innerHTML = porVencer.length === 0
-          ? '<tr><td colspan="4" style="text-align:center">No hay miembros próximos a vencer</td></tr>'
+          ? '<tr><td colspan="4" style="text-align:center">No hay usuarios próximos a vencer</td></tr>'
           : porVencer.map(m => `
             <tr>
               <td>${m.nombre}</td>
@@ -502,14 +507,14 @@
         `).join('');
 
         const activos = miembros.filter(m => m.estado === 'activo');
-        const options = '<option value="">Seleccionar miembro...</option>' +
+        const options = '<option value="">Seleccionar usuario...</option>' +
           activos.map(m => `<option value="${m.id}">${m.nombre} - ${m.documento}</option>`).join('');
         
         document.getElementById('miembro_asistencia').innerHTML = options;
         document.getElementById('pago_miembro').innerHTML = options;
         document.getElementById('edit_pago_miembro').innerHTML = options;
       } catch (err) {
-        console.error("Error al cargar miembros:", err);
+        console.error("Error al cargar usuarios:", err);
       }
     }
 
@@ -533,7 +538,7 @@
     }
 
     async function eliminarMiembro(id) {
-      if (!confirm('¿Estás seguro de eliminar este miembro?')) return;
+      if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
       await fetch(`/api/miembros/${id}`, { method: 'DELETE' });
       cargarMiembros();
     }
@@ -577,7 +582,7 @@
     /* FUNCIONES DE ASISTENCIA */
     async function registrarEntrada() {
       const miembro_id = document.getElementById('miembro_asistencia').value;
-      if (!miembro_id) return alert('Selecciona un miembro');
+      if (!miembro_id) return alert('Selecciona un usuario');
       await fetch('/api/asistencia/entrada', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
