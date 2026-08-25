@@ -14,6 +14,19 @@
     input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 20px; }
     button { width: 100%; background: #0077b6; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
     button:hover { background: #005f8e; }
+    
+    /* Botón Secundario para Modo Invitado */
+    .btn-invitado { 
+      background: transparent; 
+      color: #666; 
+      border: 1px solid #ccc; 
+      margin-top: 10px; 
+    }
+    .btn-invitado:hover { 
+      background: #f0f0f0; 
+      color: #333; 
+    }
+
     .error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; display: none; text-align: center; }
   </style>
 </head>
@@ -27,6 +40,7 @@
     <label>Contraseña</label>
     <input type="password" id="password" placeholder="••••••••">
     <button onclick="login()">Ingresar</button>
+    <button class="btn-invitado" onclick="loginInvitado()">Entrar como Invitado</button>
   </div>
 
   <script>
@@ -43,6 +57,7 @@
       const data = await res.json();
 
       if (res.ok) {
+        localStorage.setItem('userRole', data.rol || 'admin');
         if (data.rol === 'admin') {
           window.location.href = '/index.html';
         } else {
@@ -51,6 +66,12 @@
       } else {
         document.getElementById('error').style.display = 'block';
       }
+    }
+
+    // Nueva función para entrar sin contraseña
+    function loginInvitado() {
+      localStorage.setItem('userRole', 'guest');
+      window.location.href = '/index.html'; // Redirige a la vista principal en modo lectura
     }
 
     // Permitir login con Enter
