@@ -742,9 +742,15 @@ function mostrarPagosFiltrados(pagos, total) {
         </tr>
       `).join('');
     }
+document.getElementById('cantidadHoy').textContent = pagosHoy.length;
+      mostrarPagosFiltrados(pagos, total);
+    }
 
-    cargarMiembros();
-cargarDashboard();
+    // Carga inicial al abrir la aplicación
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarMiembros();
+      cargarDashboard();
+    });
   </script>
 </body>
 </html>
