@@ -21,12 +21,13 @@
       color: #666; 
       border: 1px solid #ccc; 
       margin-top: 10px; 
+      font-size: 14px;
     }
     .btn-invitado:hover { 
       background: #f0f0f0; 
       color: #333; 
     }
-
+    .demo-titulo { text-align: center; color: #aaa; font-size: 12px; margin-top: 20px; margin-bottom: 0; }
     .error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; display: none; text-align: center; }
   </style>
 </head>
@@ -40,22 +41,20 @@
     <label>Contraseña</label>
     <input type="password" id="password" placeholder="••••••••">
     <button onclick="login()">Ingresar</button>
-    <button class="btn-invitado" onclick="loginInvitado()">Entrar como Invitado</button>
+    <p class="demo-titulo">— o explora la demostración —</p>
+    <button class="btn-invitado" onclick="loginInvitado('admin')">👤 Invitado — Administrador</button>
+    <button class="btn-invitado" onclick="loginInvitado('portero')">🚪 Invitado — Portería</button>
   </div>
-
   <script>
     async function login() {
       const usuario = document.getElementById('usuario').value;
       const password = document.getElementById('password').value;
-
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario, password })
       });
-
       const data = await res.json();
-
       if (res.ok) {
         localStorage.setItem('userRole', data.rol || 'admin');
         if (data.rol === 'admin') {
@@ -67,13 +66,16 @@
         document.getElementById('error').style.display = 'block';
       }
     }
-
-    // Nueva función para entrar sin contraseña
-    function loginInvitado() {
-      localStorage.setItem('userRole', 'guest');
-      window.location.href = '/index.html'; // Redirige a la vista principal en modo lectura
+    // Entrar sin contraseña, eligiendo el perfil a demostrar
+    function loginInvitado(perfil) {
+      if (perfil === 'portero') {
+        localStorage.setItem('userRole', 'guest-portero');
+        window.location.href = '/portero.html';
+      } else {
+        localStorage.setItem('userRole', 'guest');
+        window.location.href = '/index.html';
+      }
     }
-
     // Permitir login con Enter
     document.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') login();
