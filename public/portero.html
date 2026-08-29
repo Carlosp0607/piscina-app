@@ -28,6 +28,7 @@
     .miembro-info { background: #e8f4fd; border: 2px solid #0077b6; border-radius: 10px; padding: 20px; margin-bottom: 15px; display: none; }
     .miembro-info h3 { color: #0077b6; margin-bottom: 10px; }
     .miembro-info p { font-size: 14px; margin-bottom: 5px; }
+    .banner-demo { background: #fff3cd; color: #856404; padding: 12px 20px; text-align: center; font-size: 14px; font-weight: bold; display: none; }
   </style>
 </head>
 <body>
@@ -36,6 +37,8 @@
     <span id="reloj" style="font-size: 14px;"></span>
     <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
   </header>
+
+  <div class="banner-demo" id="banner-demo">👁️ Modo demostración — vista de solo lectura del perfil Portería</div>
 
   <div class="container">
     <div class="card">
@@ -52,7 +55,7 @@
         <p><strong>Plan:</strong> <span id="info-plan"></span></p>
         <p><strong>Vence:</strong> <span id="info-vencimiento"></span></p>
         <p><strong>Estado:</strong> <span id="info-estado"></span></p>
-        <button onclick="registrarEntrada()">✅ Registrar Entrada</button>
+        <button id="btn-entrada" onclick="registrarEntrada()">✅ Registrar Entrada</button>
       </div>
     </div>
 
@@ -60,7 +63,8 @@
       <h2>Asistencia de Hoy</h2>
       <table>
         <thead>
-          <tr><th>Miembro</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Acción</th></tr>        </thead>
+          <tr><th>Miembro</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Acción</th></tr>
+        </thead>
         <tbody id="tablaAsistencia"></tbody>
       </table>
     </div>
@@ -69,8 +73,17 @@
   <script>
     let miembroSeleccionado = null;
     let todosMiembros = [];
+    const esInvitado = localStorage.getItem('userRole') === 'guest-portero';
 
     async function verificarSesion() {
+      // Invitado de portería: no hay sesión en el servidor, es solo demostración
+      if (esInvitado) {
+        document.getElementById('banner-demo').style.display = 'block';
+        const btn = document.getElementById('btn-entrada');
+        if (btn) btn.style.display = 'none';
+        return;
+      }
+
       const res = await fetch('/api/auth/session');
       if (!res.ok) {
         window.location.href = '/login.html';
@@ -112,6 +125,7 @@
     }
 
     async function registrarEntrada() {
+      if (esInvitado) return;
       if (!miembroSeleccionado) return;
       if (miembroSeleccionado.estado !== 'activo') {
         mostrarAlerta('error', '❌ Este miembro no tiene membresía activa');
@@ -130,6 +144,7 @@
     }
 
     async function registrarSalida(id) {
+      if (esInvitado) return;
       await fetch(`/api/asistencia/${id}/salida`, { method: 'PATCH' });
       cargarAsistenciaHoy();
     }
@@ -138,13 +153,13 @@
       const res = await fetch('/api/asistencia/hoy');
       const lista = await res.json();
       const tbody = document.getElementById('tablaAsistencia');
-     tbody.innerHTML = lista.map(a => `
+      tbody.innerHTML = lista.map(a => `
         <tr>
           <td>${a.nombre}</td>
           <td>${new Date(a.fecha).toLocaleDateString('es-CO')}</td>
           <td>${a.hora_entrada ? a.hora_entrada.slice(0,5) : '---'}</td>
-<td>${a.hora_salida ? a.hora_salida.slice(0,5) : ''}</td>
-<td>${!a.hora_salida ? `<button class="btn-salida" onclick="registrarSalida(${a.id})">🚪 Salida</button>` : '✅ Completado'}</td>
+          <td>${a.hora_salida ? a.hora_salida.slice(0,5) : ''}</td>
+          <td>${a.hora_salida ? '✅ Completado' : (esInvitado ? '⏳ En curso' : `<button class="btn-salida" onclick="registrarSalida(${a.id})">🚪 Salida</button>`)}</td>
         </tr>
       `).join('');
     }
@@ -160,7 +175,10 @@
     }
 
     async function logout() {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      if (!esInvitado) {
+        await fetch('/api/auth/logout', { method: 'POST' });
+      }
+      localStorage.removeItem('userRole');
       window.location.href = '/login.html';
     }
 
@@ -169,13 +187,13 @@
     cargarAsistenciaHoy();
 
     function actualizarReloj() {
-  const ahora = new Date();
-  const fecha = ahora.toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  const hora = ahora.toLocaleTimeString('es-CO');
-  document.getElementById('reloj').textContent = `📅 ${fecha} — ⏰ ${hora}`;
-}
-actualizarReloj();
-setInterval(actualizarReloj, 1000);
+      const ahora = new Date();
+      const fecha = ahora.toLocaleDateString('es-CO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      const hora = ahora.toLocaleTimeString('es-CO');
+      document.getElementById('reloj').textContent = `📅 ${fecha} — ⏰ ${hora}`;
+    }
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
   </script>
 </body>
 </html>
