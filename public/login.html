@@ -67,7 +67,16 @@
       }
     }
     // Entrar sin contraseña, eligiendo el perfil a demostrar
-    function loginInvitado(perfil) {
+    async function loginInvitado(perfil) {
+      const res = await fetch('/api/auth/invitado', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ perfil })
+      });
+      if (!res.ok) {
+        document.getElementById('error').style.display = 'block';
+        return;
+      }
       if (perfil === 'portero') {
         localStorage.setItem('userRole', 'guest-portero');
         window.location.href = '/portero.html';
