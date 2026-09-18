@@ -1,24 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const asistenciaController = require('../controllers/asistenciaController');
+const { permitir } = require('../middleware/auth');
 
-// Middleware opcional para bloquear escritura a invitados
-const soloUsuarios = (req, res, next) => {
-  const isGuest = req.headers['x-user-role'] === 'guest' || req.headers['authorization'] === 'Bearer invitado-token';
-  if (isGuest) {
-    return res.status(403).json({ error: "Los invitados solo tienen permisos de lectura." });
-  }
-  next();
-};
+const lectura = permitir('admin', 'portero', 'guest', 'guest-portero');
+const escritura = permitir('admin', 'portero');
 
-// RUTAS PÚBLICAS (Lectura permitida a visitantes e invitados)
-router.get('/', asistenciaController.getAll);
-router.get('/hoy', asistenciaController.getHoy);
-router.get('/mes', asistenciaController.getByMes);
-router.get('/rango', asistenciaController.getByRango);
+router.get('/', lectura, asistenciaController.getAll);
+router.get('/hoy', lectura, asistenciaController.getHoy);
+router.get('/mes', lectura, asistenciaController.getByMes);
+router.get('/rango', lectura, asistenciaController.getByRango);
 
-// RUTAS PROTEGIDAS (Escritura bloqueada a invitados)
-router.post('/entrada', soloUsuarios, asistenciaController.registrarEntrada);
-router.patch('/:id/salida', soloUsuarios, asistenciaController.registrarSalida);
+router.post('/entrada', escritura, asistenciaController.registrarEntrada);
+router.patch('/:id/salida', escritura, asistenciaController.registrarSalida);
 
 module.exports = router;
