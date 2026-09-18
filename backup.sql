@@ -215,71 +215,31 @@ ALTER TABLE ONLY public.usuarios ALTER COLUMN id SET DEFAULT nextval('public.usu
 
 
 --
--- Data for Name: asistencia; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.asistencia (id, miembro_id, fecha, hora_entrada, hora_salida, created_at) FROM stdin;
-1	1	2026-04-17	18:06:46.296669	18:06:53.567545	2026-04-17 18:06:46.296669
-2	1	2026-04-17	21:48:26.409765	21:49:01.554478	2026-04-17 21:48:26.409765
-3	1	2026-04-17	21:59:25.020211	22:03:02.558345	2026-04-17 21:59:25.020211
-4	1	2026-04-17	22:04:20.781909	22:05:11.617805	2026-04-17 22:04:20.781909
-\.
-
-
---
--- Data for Name: miembros; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.miembros (id, nombre, documento, telefono, email, plan, fecha_inicio, fecha_vencimiento, estado, created_at) FROM stdin;
-1	Carlos Pérez	12345678	3001234568	carlos@email.com	mensual	2026-04-17	2026-05-17	activo	2026-04-17 17:00:05.629795
-\.
-
-
---
--- Data for Name: pagos; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.pagos (id, miembro_id, concepto, monto, metodo_pago, fecha, observaciones, created_at, fecha_finalizacion) FROM stdin;
-2	1	mensualidad	50000.00	efectivo	2026-04-17		2026-04-17 18:42:15.536823	2026-05-17
-\.
-
-
---
--- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.usuarios (id, nombre, usuario, password, rol, created_at) FROM stdin;
-1	Administrador	admin	admin123	admin	2026-04-17 21:38:33.1441
-2	Portero	portero	portero123	portero	2026-04-17 21:38:33.1441
-\.
-
-
---
 -- Name: asistencia_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.asistencia_id_seq', 4, true);
+SELECT pg_catalog.setval('public.asistencia_id_seq', 1, false);
 
 
 --
 -- Name: miembros_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.miembros_id_seq', 2, true);
+SELECT pg_catalog.setval('public.miembros_id_seq', 1, false);
 
 
 --
 -- Name: pagos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.pagos_id_seq', 2, true);
+SELECT pg_catalog.setval('public.pagos_id_seq', 1, false);
 
 
 --
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.usuarios_id_seq', 2, true);
+SELECT pg_catalog.setval('public.usuarios_id_seq', 1, false);
 
 
 --
@@ -351,4 +311,3 @@ ALTER TABLE ONLY public.pagos
 --
 
 \unrestrict Fd9CrdoP1GphYFPmdxyaxwUek0VsCelIQfNpTk2mt1164bDjJ1DTO4D8y7wHJOY
-
