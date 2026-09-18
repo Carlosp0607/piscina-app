@@ -1,27 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const pagoController = require('../controllers/pagoController');
+const { permitir } = require('../middleware/auth');
 
-// Bloquea acciones de modificación a los usuarios invitados
-const soloUsuarios = (req, res, next) => {
-  const isGuest = req.headers['x-user-role'] === 'guest' || req.headers['authorization'] === 'Bearer invitado-token';
-  if (isGuest) {
-    return res.status(403).json({ error: "Los invitados solo tienen permisos de lectura." });
-  }
-  next();
-};
+const lectura = permitir('admin', 'guest');
+const escritura = permitir('admin');
 
-// RUTAS PÚBLICAS (Lectura abierta para todos)
-router.get('/hoy', pagoController.getHoy);
-router.get('/total-hoy', pagoController.getTotalHoy);
-router.get('/mes', pagoController.getByMes);
-router.get('/rango', pagoController.getByRango);
-router.get('/:id', pagoController.getById);
-router.get('/', pagoController.getAll);
+router.get('/hoy', lectura, pagoController.getHoy);
+router.get('/total-hoy', lectura, pagoController.getTotalHoy);
+router.get('/mes', lectura, pagoController.getByMes);
+router.get('/rango', lectura, pagoController.getByRango);
+router.get('/:id', lectura, pagoController.getById);
+router.get('/', lectura, pagoController.getAll);
 
-// RUTAS PROTEGIDAS (Bloqueadas para invitados)
-router.post('/', soloUsuarios, pagoController.create);
-router.put('/:id', soloUsuarios, pagoController.update);
-router.delete('/:id', soloUsuarios, pagoController.delete);
+router.post('/', escritura, pagoController.create);
+router.put('/:id', escritura, pagoController.update);
+router.delete('/:id', escritura, pagoController.delete);
 
 module.exports = router;
