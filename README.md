@@ -28,8 +28,17 @@ Registro de entrada y consultas agregadas del día, del mes o de un rango de fec
 **Pagos**
 Registro de pagos con total del día, acumulado mensual y consulta por rango. Es lo que permite cuadrar la caja al cierre.
 
-**Autenticación**
-Login con sesión de servidor mediante `express-session`. Incluye una ruta de acceso como invitado que habilita una sesión de demostración sin credenciales.
+**Autenticación y permisos**
+Login con contraseñas cifradas con bcrypt y sesión en cookie firmada. Cada ruta de la API valida en el servidor que exista una sesión y que el rol tenga permiso para la acción; el frontend no decide nada por su cuenta.
+
+| Rol | Puede |
+|---|---|
+| `admin` | Todo: miembros, asistencia y pagos |
+| `portero` | Consultar miembros y registrar entradas y salidas |
+| `guest` | Ver el panel de administración en modo lectura |
+| `guest-portero` | Ver la portería en modo lectura |
+
+La ruta de invitado crea una sesión de demostración sin credenciales, con permisos de solo lectura.
 
 ---
 
@@ -55,7 +64,8 @@ El archivo `backup.sql` contiene el volcado de estructura, sin datos. Sirve para
 | Runtime | Node.js |
 | Framework | Express 5 |
 | Base de datos | PostgreSQL (`pg`) |
-| Sesiones | express-session |
+| Sesiones | cookie-session |
+| Contraseñas | bcryptjs |
 | Configuración | dotenv |
 | Despliegue | Vercel |
 
@@ -72,15 +82,27 @@ npm install
 Crea un archivo `.env` en la raíz:
 
 ```
-DATABASE_URL=postgresql://usuario:clave@host:5432/basededatos
-SESSION_SECRET=cadena_aleatoria_para_las_sesiones
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=piscina
+DB_USER=usuario
+DB_PASSWORD=clave
+SESSION_SECRET=cadena_aleatoria_larga
 PORT=3000
 ```
 
-Levanta el esquema:
+Sin `SESSION_SECRET` el servidor no arranca.
+
+Levanta el esquema y crea un administrador (la contraseña se guarda cifrada):
 
 ```bash
-psql $DATABASE_URL -f backup.sql
+psql -h localhost -U usuario -d piscina -f backup.sql
+```
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+INSERT INTO usuarios (nombre, usuario, password, rol)
+VALUES ('Administrador', 'admin', crypt('tu_clave', gen_salt('bf', 10)), 'admin');
 ```
 
 ```bash
@@ -93,8 +115,9 @@ npm start
 
 ```
 src/
-  index.js          Servidor Express y montaje de rutas
+  index.js          Servidor Express, sesión y montaje de rutas
   database.js       Pool de conexión a PostgreSQL
+  middleware/       Validación de sesión y permisos por rol
   routes/           Endpoints de miembros, asistencia, pagos y auth
   controllers/      Lógica de cada módulo
   models/           Consultas SQL
@@ -109,4 +132,4 @@ backup.sql          Volcado de estructura
 
 ## Estado
 
-En funcionamiento, desplegado en Vercel con base de datos PostgreSQL gestionada.
+Demo en vivo, desplegada en Vercel con base de datos PostgreSQL gestionada.
