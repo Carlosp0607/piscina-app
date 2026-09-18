@@ -385,8 +385,20 @@
   <script>
     const hoyISO = new Date().toISOString().split('T')[0];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const role = localStorage.getItem('userRole');
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Solo entra quien tenga sesión de administrador o de invitado de administración
+      const sesion = await fetch('/api/auth/session');
+      if (!sesion.ok) {
+        window.location.href = '/login.html';
+        return;
+      }
+      const datosSesion = await sesion.json();
+      if (datosSesion.rol !== 'admin' && datosSesion.rol !== 'guest') {
+        window.location.href = '/login.html';
+        return;
+      }
+
+      const role = datosSesion.rol;
 
       if (role === 'guest') {
         document.querySelectorAll('form, button[onclick^="registrar"], .btn-editar, .btn-eliminar').forEach(el => {
@@ -407,6 +419,7 @@
 
     async function logout() {
       await fetch('/api/auth/logout', { method: 'POST' });
+      localStorage.removeItem('userRole');
       window.location.href = '/login.html';
     }
 
